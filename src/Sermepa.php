@@ -33,7 +33,7 @@ class Sermepa {
   private $DsMerchantCurrency;
 
   /**
-   * Required. Order identifier.The first 4 digits must be numeric, for the
+   * Required. Order identifier. The first 4 digits must be numeric, for the
    * remaining digits only use the following characters ASCII:
    * - From 30 = 0 to 39 = 9
    * - From 65 = A to 90 = Z
@@ -88,7 +88,7 @@ class Sermepa {
   private $DsMerchantConsumerLanguage;
 
   /**
-   * Required.
+   * Required. Commerce signature key.
    */
   private $DsMerchantMerchantSignature;
 
@@ -153,22 +153,98 @@ class Sermepa {
   private $environment;
 
   /**
-   * Empty constructor.
-   */
-  public function __construct() {
-    $this->init();
-  }
-
-  /**
    * Initialize the instance.
+   *
+   * @param string $titular
+   *   This field will display to the holder on the screen confirmation of
+   *   purchase.
+   *
+   * @param string $merchant_code
+   *   FUC Code assigned to commerce.
+   *
+   * @param string $merchant_terminal
+   *   Terminal number will be assigned your bank. 3 is considered the maximum
+   *   length.
+   *
+   * @param string $merchant_signature
+   *   Commerce signature key.
+   *
+   * @param string $environment
+   *   Environment: live, test or an override url.
+   *
+   * @param string $encryption_method
+   *   Method of encryption, SHA or Enhanced SHA (sha1 or sha1-enhanced).
+   *
+   * @param array $options
+   *   (Optional) An associative array of additional options, with the following
+   *   elements:
+   *   - amount: To Euros the last two positions are considered decimal.
+   *   - currency: Numeric currency code.
+   *   - order: Order identifier. The first 4 digits must be numeric.
+   *   - product_description: This field will display to the holder on the
+   *       screen confirmation of purchase.
+   *   - merchant_url: URL of commerce that will receive a post with transaction
+   *       data.
+   *   - url_ok: If you send will be used as ignoring the configured URLOK the
+   *       administration module if you have it.
+   *   - url_ko: If you send will be used as ignoring the configured URLKO the
+   *       administration module if you have it.
+   *   - merchant_name: Commerce name will appear on the ticket that the client.
+   *   - consumer_language: The value 000, indicating that there isn't
+   *       determined the customer's language.
+   *   - sum_total: Represents the sum of the amounts of fees. The latter two
+   *       are considered decimal positions.
+   *   - transaction_type: What type of transaction it is.
+   *   - merchant_data: Field for commerce to be included in the data sent by
+   *       the "on-line" answer to trade if you have chosen this option.
+   *   - date_frecuency: Frequency in days for recurring transactions, recurring
+   *       deferred.
+   *   - charge_expiry_date: Format yyyy-MM-dd date for recurring transactions.
+   *   - authorisation_code: Represents the authorization code necessary to
+   *       identify a recurring transaction returns successively in subsequent
+   *       recurring transactions.
+   *   - transaction_date: Format yyyy-MM-dd. Represents the date of subsequent
+   *       recurrent operation is required to identify the transaction in
+   *       successive returns from continuing operations.
+   *
+   * @throws ErrorException
    */
-  private function init() {
-    $this->setEnvironment('live');
-    $this->setEncryptionMethod('sha1');
-    $this->setTerminal('001');
-    $this->setCurrency(978);
-    $this->setConsumerLanguage(000);
-    $this->setTransactionType(0);
+  public function __construct($titular, $merchant_code, $merchant_terminal, $merchant_signature, $environment, $encryption_method, $options = array()) {
+    $options_to_methods = array(
+      'amount' => 'setAmount',
+      'currency' => 'setCurrency',
+      'order' => 'setOrder',
+      'product_description' => 'setProductDescription',
+      'merchant_url' => 'setMerchantURL',
+      'url_ok' => 'setUrlOK',
+      'url_ko' => 'setUrlKO',
+      'merchant_name' => 'setMerchantName',
+      'consumer_language' => 'setConsumerLanguage',
+      'sum_total' => 'setSumTotal',
+      'transaction_type' => 'setTransactionType',
+      'merchant_data' => 'setMerchantData',
+      'date_frecuency' => 'setDateFrecuency',
+      'charge_expiry_date' => 'setChargeExpiryDate',
+      'authorisation_code' => 'setAuthorisationCode',
+      'transaction_date' => 'setTransactionDate',
+    );
+
+    $this->setTitular($titular)
+         ->setMerchantCode($merchant_code)
+         ->setTerminal($merchant_terminal)
+         ->setMerchantSignature($merchant_signature)
+         ->setEnvironment($environment)
+         ->setEncryptionMethod($encryption_method);
+
+    foreach ($options as $key => $value) {
+      $method = $options_to_methods[$key];
+      if (method_exists($this, $method)) {
+        $this->$method($value);
+      }
+      else {
+        throw new ErrorException('The option ' . $key . ' is not defined.');
+      }
+    }
   }
 
   /**
@@ -179,7 +255,7 @@ class Sermepa {
    */
   private function composeSignature() {
     if ($this->encryptionMethod == 'sha1-enhanced') {
-      if ($this->DsMerchantAmount > $this->DsMerchantSumTotal) {
+      if ($this->DsMerchantSumTotal > $this->DsMerchantAmount) {
         $message = $this->DsMerchantAmount . $this->DsMerchantOrder . $this->DsMerchantMerchantCode . $this->DsMerchantCurrency . $this->DsMerchantSumTotal . $this->DsMerchantTransactionType . $this->DsMerchantMerchantURL . $this->DsMerchantMerchantSignature;
       }
       else {
@@ -190,7 +266,7 @@ class Sermepa {
     elseif ($this->encryptionMethod == 'sha1') {
       include_once "includes/sha1.php";
       $sha = new SHA1();
-      if ($this->DsMerchantAmount > $this->DsMerchantSumTotal) {
+      if ($this->DsMerchantSumTotal > $this->DsMerchantAmount) {
         $message = $this->DsMerchantAmount . $this->DsMerchantOrder . $this->DsMerchantMerchantCode . $this->DsMerchantCurrency .  $this->DsMerchantSumTotal . $this->DsMerchantMerchantSignature;
       }
       else {
@@ -218,14 +294,6 @@ class Sermepa {
     if (empty($this->DsMerchantOrder)) {
       $validate = FALSE;
       throw new ErrorException('Must enter a valid Ds_Merchant_Order.');
-    }
-    if (empty($this->DsMerchantTitular)) {
-      $validate = FALSE;
-      throw new ErrorException('Must enter a valid Ds_Merchant_Titular.');
-    }
-    if (empty($this->DsMerchantMerchantCode)) {
-      $validate = FALSE;
-      throw new ErrorException('Must enter a valid Ds_Merchant_MerchantCode.');
     }
     if (empty($this->DsMerchantSumTotal) || !empty($this->DsMerchantAmount)) {
       $this->setSumTotal($this->DsMerchantAmount);

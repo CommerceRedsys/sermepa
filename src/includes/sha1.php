@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file:
+ * @file
  * SHA class for sermepa connections not "Enhanced SHA"
  */
 

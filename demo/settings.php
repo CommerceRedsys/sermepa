@@ -5,6 +5,9 @@
  * Sermepa payment gateway configuration file.
  */
 
+die('You must edit Sermepa/demo/settings.php file to test me!');
+
+
 $settings = array(
   'titular' => 'Manuel García',
   'merchantCode' => '000000000',

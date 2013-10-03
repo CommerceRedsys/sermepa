@@ -1,4 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+
+/**
+ * @file
+ * Example of use.
+ */
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -45,19 +51,8 @@
   include_once "settings.php";
   include_once "../src/Sermepa.php";
 
-  // Create a new instance.
-  $gateway = new Sermepa();
-
-  // Initialize with our settings.
-  $gateway->setTitular($settings['titular'])
-          ->setMerchantCode($settings['merchantCode'])
-          ->setMerchantURL('http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'getFeedback.php')
-          ->setUrlKO('http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'ko.php')
-          ->setUrlOK('http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'ok.php')
-          ->setMerchantSignature($settings['merchantSignature'])
-          ->setTerminal($settings['terminal'])
-          ->setEncryptionMethod($settings['encryptionMethod'])
-          ->setEnvironment($settings['environment']);
+  // Create a new instance and initialize it.
+  $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantSignature'], $settings['environment'], $settings['encryptionMethod']);
 
   // Load the payment from ???? and set the necessary values.
   $amount = 15050;
