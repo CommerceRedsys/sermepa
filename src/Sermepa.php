@@ -355,14 +355,7 @@ class Sermepa {
       'Ds_Merchant_TransactionDate' => $this->DsMerchantTransactionDate,
     );
 
-    // Remove empty fields.
-    foreach ($hidden_fields as $name => $value) {
-      if (empty($value)) {
-        unset($hidden_fields[$name]);
-      }
-    }
-
-    return $hidden_fields;
+    return array_filter($hidden_fields);
   }
 
   /**
@@ -404,17 +397,14 @@ class Sermepa {
     $merchant_signature = $this->getMerchantSignature();
     if (empty($merchant_signature)) {
       throw new SermepaException('Must enter a valid Ds_Merchant_MerchantSignature.', Sermepa::BAD_PARAM);
-      return FALSE;
     }
 
     $message = $payment_amount . $feedback['Ds_Order'] . $feedback['Ds_MerchantCode'] . $feedback['Ds_Currency'] . $feedback['Ds_Response'] . $merchant_signature;
     if (empty($feedback['Ds_AuthorisationCode'])) {
       throw new SermepaException('No authorisation code for the transaction.', Sermepa::MISSING_PARAM);
-      return FALSE;
     }
     elseif ($feedback['Ds_Signature'] != strtoupper(sha1($message))) {
       throw new SermepaException('Signature for the payment does not match.', Sermepa::BAD_PARAM);
-      return FALSE;
     }
 
     return TRUE;
