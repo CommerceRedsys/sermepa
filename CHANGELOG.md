@@ -1,5 +1,6 @@
 Sermepa - master Oct 2013
 =========================
+- Updated demo.
 - Added a private method to get a camel based method name based on a dash cased name.
 - Added some improvements.
 - Improved exception treatment.
