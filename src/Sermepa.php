@@ -8,10 +8,32 @@
  * http://www.servired.es/espanol/miembros.htm
  */
 
+require_once 'SermepaException.php';
+
 /**
  * Class implementation.
  */
 class Sermepa {
+  /**
+   * Constant indicating error code for an undefined parameter.
+   */
+  const UNDEFINED_PARAM = 0;
+
+  /**
+   * Constant indicating error code for a missing parameter.
+   */
+  const MISSING_PARAM = 1;
+
+  /**
+   * Constant indicating error code for a bad parameter.
+   */
+  const BAD_PARAM = 2;
+
+  /**
+   * Constant indicating error code for a too long parameter.
+   */
+  const TOOLONG_PARAM = 3;
+
   /**
    * Constant indicating the test environment.
    */
@@ -207,7 +229,7 @@ class Sermepa {
    *       recurrent operation is required to identify the transaction in
    *       successive returns from continuing operations.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function __construct($titular, $merchant_code, $merchant_terminal, $merchant_signature, $environment, $encryption_method, $options = array()) {
     $options_to_methods = array(
@@ -242,7 +264,7 @@ class Sermepa {
         $this->$method($value);
       }
       else {
-        throw new ErrorException('The option ' . $key . ' is not defined.');
+        throw new SermepaException('The option ' . $key . ' is not defined.', Sermepa::UNDEFINED_PARAM);
       }
     }
   }
@@ -283,17 +305,17 @@ class Sermepa {
    * @return boolean
    *   Boolean indicating whether or not the properties was valdiated.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   private function check() {
     $validate = TRUE;
     if (empty($this->DsMerchantAmount)) {
       $validate = FALSE;
-      throw new ErrorException('Must enter a valid Ds_Merchant_Amount.');
+      throw new SermepaException('Must enter a valid Ds_Merchant_Amount.', Sermepa::BAD_PARAM);
     }
     if (empty($this->DsMerchantOrder)) {
       $validate = FALSE;
-      throw new ErrorException('Must enter a valid Ds_Merchant_Order.');
+      throw new SermepaException('Must enter a valid Ds_Merchant_Order.', Sermepa::BAD_PARAM);
     }
     if (empty($this->DsMerchantSumTotal) || !empty($this->DsMerchantAmount)) {
       $this->setSumTotal($this->DsMerchantAmount);
@@ -376,22 +398,22 @@ class Sermepa {
    * @return boolean
    *   Boolean indicating whether or not the transaction was valdiated.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function checkFeedback($feedback, $payment_amount) {
     $merchant_signature = $this->getMerchantSignature();
     if (empty($merchant_signature)) {
-      throw new ErrorException('Must enter a valid Ds_Merchant_MerchantSignature.');
+      throw new SermepaException('Must enter a valid Ds_Merchant_MerchantSignature.', Sermepa::BAD_PARAM);
       return FALSE;
     }
 
     $message = $payment_amount . $feedback['Ds_Order'] . $feedback['Ds_MerchantCode'] . $feedback['Ds_Currency'] . $feedback['Ds_Response'] . $merchant_signature;
     if (empty($feedback['Ds_AuthorisationCode'])) {
-      throw new ErrorException('No authorisation code for the transaction.');
+      throw new SermepaException('No authorisation code for the transaction.', Sermepa::MISSING_PARAM);
       return FALSE;
     }
     elseif ($feedback['Ds_Signature'] != strtoupper(sha1($message))) {
-      throw new ErrorException('Signature for the payment does not match.');
+      throw new SermepaException('Signature for the payment does not match.', Sermepa::BAD_PARAM);
       return FALSE;
     }
 
@@ -592,11 +614,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   protected function set($key, $value) {
     if (!property_exists($this, $key)) {
-      throw new ErrorException('The property ' . $key . ' is not defined.');
+      throw new SermepaException('The property ' . $key . ' is not defined.', Sermepa::UNDEFINED_PARAM);
     }
     $this->{$key} = $value;
     return $this;
@@ -611,11 +633,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setAmount($amount) {
     if (!preg_match('/^([0-9]+)$/i', $amount)) {
-      throw new ErrorException('The specified Ds_Merchant_Amount: ' . $amount . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_Amount: ' . $amount . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantAmount', $amount);
   }
@@ -639,13 +661,13 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setCurrency($currency) {
     if (strlen($currency) != 3 &&
         !preg_match('/^([0-9]+)$/i', $currency) &&
         !array_key_exists($currency, $this->getAvailableCurrencies())) {
-      throw new ErrorException('The specified Ds_Merchant_Currency: ' . $currency . ' is not valid/available.');
+      throw new SermepaException('The specified Ds_Merchant_Currency: ' . $currency . ' is not valid/available.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantCurrency', $currency);
   }
@@ -669,13 +691,13 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setOrder($order) {
     if (strlen($order) > 12 &&
         !preg_match('/^([0-9]{4})$/i', $order) &&
         !preg_match('/^([a-zA-Z0-9]+)$/i', $order)) {
-      throw new ErrorException('The specified Ds_Merchant_Order: ' . $order . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_Order: ' . $order . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantOrder', $order);
   }
@@ -699,11 +721,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setProductDescription($product_description) {
     if (strlen($product_description) > 125) {
-      throw new ErrorException('The specified Ds_Merchant_ProductDescription: ' . $product_description . ' is too long.');
+      throw new SermepaException('The specified Ds_Merchant_ProductDescription: ' . $product_description . ' is too long.', Sermepa::TOOLONG_PARAM);
     }
     return $this->set('DsMerchantProductDescription', $product_description);
   }
@@ -727,11 +749,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setTitular($titular) {
     if (strlen($titular) > 60) {
-      throw new ErrorException('The specified Ds_Merchant_Titular: ' . $titular . ' is too long.');
+      throw new SermepaException('The specified Ds_Merchant_Titular: ' . $titular . ' is too long.', Sermepa::TOOLONG_PARAM);
     }
     return $this->set('DsMerchantTitular', $titular);
   }
@@ -755,11 +777,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setMerchantCode($merchant_code) {
     if (strlen($merchant_code) != 9) {
-      throw new ErrorException('The specified Ds_Merchant_MerchantCode: ' . $merchant_code . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_MerchantCode: ' . $merchant_code . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantMerchantCode', $merchant_code);
   }
@@ -783,11 +805,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setMerchantURL($merchant_url) {
     if (!filter_var($merchant_url, FILTER_VALIDATE_URL)) {
-      throw new ErrorException('The specified Ds_Merchant_MerchantURL: ' . $merchant_url . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_MerchantURL: ' . $merchant_url . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantMerchantURL', $merchant_url);
   }
@@ -811,11 +833,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setUrlOK($url_ok) {
     if (!filter_var($url_ok, FILTER_VALIDATE_URL)) {
-      throw new ErrorException('The specified Ds_Merchant_UrlOK: ' . $url_ok . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_UrlOK: ' . $url_ok . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantUrlOK', $url_ok);
   }
@@ -839,11 +861,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setUrlKO($url_ko) {
     if (!filter_var($url_ko, FILTER_VALIDATE_URL)) {
-      throw new ErrorException('The specified Ds_Merchant_UrlKO: ' . $url_ko . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_UrlKO: ' . $url_ko . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantUrlKO', $url_ko);
   }
@@ -867,11 +889,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setMerchantName($merchant_name) {
     if (strlen($merchant_name) > 25) {
-      throw new ErrorException('The specified Ds_Merchant_MerchantName: ' . $merchant_name . ' is too long.');
+      throw new SermepaException('The specified Ds_Merchant_MerchantName: ' . $merchant_name . ' is too long.', Sermepa::TOOLONG_PARAM);
     }
     return $this->set('DsMerchantMerchantName', $merchant_name);
   }
@@ -895,13 +917,13 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setConsumerLanguage($consumer_language) {
     if (strlen($consumer_language) != 3 &&
         !preg_match('/^([0-9]+)$/i', $consumer_language) &&
         !array_key_exists($consumer_language, $this->getAvailableConsumerLanguages())) {
-      throw new ErrorException('The specified Ds_Merchant_ConsumerLanguage: ' . $consumer_language . ' is not valid/available.');
+      throw new SermepaException('The specified Ds_Merchant_ConsumerLanguage: ' . $consumer_language . ' is not valid/available.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantConsumerLanguage', $consumer_language);
   }
@@ -925,11 +947,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setMerchantSignature($merchant_signature) {
     if (empty($merchant_signature)) {
-      throw new ErrorException('The specified Ds_Merchant_MerchantSignature is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_MerchantSignature is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantMerchantSignature', $merchant_signature);
   }
@@ -953,11 +975,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setTerminal($terminal) {
     if (strlen($terminal) != 3 && !preg_match('/^([0-9]+)$/i', $terminal)) {
-      throw new ErrorException('The specified Ds_Merchant_Terminal: ' . $terminal . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_Terminal: ' . $terminal . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantTerminal', $terminal);
   }
@@ -981,11 +1003,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setSumTotal($sum_total) {
     if (!preg_match('/^([0-9]+)$/i', $sum_total)) {
-      throw new ErrorException('The specified Ds_Merchant_SumTotal: ' . $sum_total . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_SumTotal: ' . $sum_total . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantSumTotal', $sum_total);
   }
@@ -1009,11 +1031,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setTransactionType($transaction_type) {
     if (!array_key_exists($transaction_type, $this->getAvailableTransactionTypes())) {
-      throw new ErrorException('The specified Ds_Merchant_TransactionType: ' . $transaction_type . ' is not valid/available.');
+      throw new SermepaException('The specified Ds_Merchant_TransactionType: ' . $transaction_type . ' is not valid/available.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantTransactionType', $transaction_type);
   }
@@ -1037,11 +1059,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setMerchantData($merchant_data) {
     if (strlen($merchant_data) > 1024) {
-      throw new ErrorException('The specified Ds_Merchant_MerchantData: ' . $merchant_data . ' is too long.');
+      throw new SermepaException('The specified Ds_Merchant_MerchantData: ' . $merchant_data . ' is too long.', Sermepa::TOOLONG_PARAM);
     }
     return $this->set('DsMerchantMerchantData', $merchant_data);
   }
@@ -1065,11 +1087,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setDateFrecuency($date_frecuency) {
     if (!preg_match('/^([0-9]+)$/i', $date_frecuency) && strlen($date_frecuency) > 5) {
-      throw new ErrorException('The specified Ds_Merchant_DateFrecuency: ' . $date_frecuency . ' is too long.');
+      throw new SermepaException('The specified Ds_Merchant_DateFrecuency: ' . $date_frecuency . ' is too long.', Sermepa::TOOLONG_PARAM);
     }
     return $this->set('DsMerchantDateFrecuency', $date_frecuency);
   }
@@ -1093,12 +1115,12 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setChargeExpiryDate($charge_expiry_date) {
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/i', $charge_expiry_date) &&
         strtotime(date("Y-m-d", strtotime($charge_expiry_date))) <= time()) {
-      throw new ErrorException('The specified Ds_Merchant_ChargeExpiryDate: ' . $charge_expiry_date . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_ChargeExpiryDate: ' . $charge_expiry_date . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantChargeExpiryDate', $charge_expiry_date);
   }
@@ -1122,11 +1144,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setAuthorisationCode($authorisation_code) {
     if (!preg_match('/^([0-9]{6})$/i', $authorisation_code)) {
-      throw new ErrorException('The specified Ds_Merchant_AuthorisationCode: ' . $authorisation_code . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_AuthorisationCode: ' . $authorisation_code . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantAuthorisationCode', $authorisation_code);
   }
@@ -1150,11 +1172,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setTransactionDate($transaction_date) {
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/i', $transaction_date)) {
-      throw new ErrorException('The specified Ds_Merchant_TransactionDate: ' . $transaction_date . ' is not valid.');
+      throw new SermepaException('The specified Ds_Merchant_TransactionDate: ' . $transaction_date . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('DsMerchantTransactionDate', $transaction_date);
   }
@@ -1178,11 +1200,11 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setEncryptionMethod($encryption_method) {
     if ($encryption_method != 'sha1' && $encryption_method != 'sha1-enhanced') {
-      throw new ErrorException('The specified encryption method: ' . $encryption_method . ' is not valid.');
+      throw new SermepaException('The specified encryption method: ' . $encryption_method . ' is not valid.', Sermepa::BAD_PARAM);
     }
     return $this->set('encryptionMethod', $encryption_method);
   }
@@ -1206,15 +1228,15 @@ class Sermepa {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws ErrorException
+   * @throws SermepaException
    */
   public function setEnvironment($environment) {
     if ($environment != 'live' && $environment != 'test' &&
         !filter_var($environment, FILTER_VALIDATE_URL)) {
-      throw new ErrorException('The specified environment: ' . $environment . ' is not valid.');
+      throw new SermepaException('The specified environment: ' . $environment . ' is not valid.', Sermepa::BAD_PARAM);
     }
     elseif ($environment == 'live' || $environment == 'test') {
-      $environment = constant('SERMEPA::SERMEPA_URL_' . strtoupper($environment));
+      $environment = constant('Sermepa::SERMEPA_URL_' . strtoupper($environment));
     }
     return $this->set('environment', $environment);
   }
