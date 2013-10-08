@@ -232,25 +232,6 @@ class Sermepa {
    * @throws SermepaException
    */
   public function __construct($titular, $merchant_code, $merchant_terminal, $merchant_signature, $environment, $encryption_method, $options = array()) {
-    $options_to_methods = array(
-      'amount' => 'setAmount',
-      'currency' => 'setCurrency',
-      'order' => 'setOrder',
-      'product_description' => 'setProductDescription',
-      'merchant_url' => 'setMerchantURL',
-      'url_ok' => 'setUrlOK',
-      'url_ko' => 'setUrlKO',
-      'merchant_name' => 'setMerchantName',
-      'consumer_language' => 'setConsumerLanguage',
-      'sum_total' => 'setSumTotal',
-      'transaction_type' => 'setTransactionType',
-      'merchant_data' => 'setMerchantData',
-      'date_frecuency' => 'setDateFrecuency',
-      'charge_expiry_date' => 'setChargeExpiryDate',
-      'authorisation_code' => 'setAuthorisationCode',
-      'transaction_date' => 'setTransactionDate',
-    );
-
     $this->setTitular($titular)
          ->setMerchantCode($merchant_code)
          ->setTerminal($merchant_terminal)
@@ -259,7 +240,7 @@ class Sermepa {
          ->setEncryptionMethod($encryption_method);
 
     foreach ($options as $key => $value) {
-      $method = $options_to_methods[$key];
+      $method = $this->getSetterMethod($key);
       if (method_exists($this, $method)) {
         $this->$method($value);
       }
@@ -267,6 +248,33 @@ class Sermepa {
         throw new SermepaException('The option ' . $key . ' is not defined.', Sermepa::UNDEFINED_PARAM);
       }
     }
+  }
+
+  /**
+   * Get a camel based method name based on a dash cased name.
+   *
+   * @param string $attribute
+   *   The dash separated name.
+   *
+   * @return string
+   *   Return camel setter method name.
+   */
+  private function getSetterMethod($attribute) {
+    $attributes = explode('_', $attribute);
+
+    $camel = '';
+    foreach ($attributes as $attr) {
+      $camel .= ucfirst($attr);
+    }
+
+    if (preg_match('/(ok|ko)$/i', $camel)) {
+      $camel = substr($camel, 0, -2) . strtoupper(substr($camel, -2));
+    }
+    elseif (preg_match('/(url)$/i', $camel)) {
+      $camel = substr($camel, 0, -3) . strtoupper(substr($camel, -3));
+    }
+
+    return 'set' . $camel;
   }
 
   /**
