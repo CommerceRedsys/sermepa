@@ -506,7 +506,7 @@ class Sermepa {
    * @return array
    *   Return an array with all available languages.
    */
-  public function getAvailableConsumerLanguages() {
+  public static function getAvailableConsumerLanguages() {
     return array(
       '001' => 'Spanish',
       '002' => 'Catalan',
@@ -530,7 +530,7 @@ class Sermepa {
    * @return array
    *   Return an array with all available currencies.
    */
-  public function getAvailableCurrencies() {
+  public static function getAvailableCurrencies() {
     return array(
       '978' => 'Euro',
       '840' => 'U.S. Dollar',
@@ -556,7 +556,7 @@ class Sermepa {
    * @return array
    *   Return an array with all available encryption methods.
    */
-  public function getAvailableEncryptionMethods() {
+  public static function getAvailableEncryptionMethods() {
     return array(
       'sha1' => 'SHA',
       'sha1-enhanced' => 'Enhanced SHA',
@@ -569,7 +569,7 @@ class Sermepa {
    * @return array
    *   Return an array with all available environments.
    */
-  public function getAvailableEnvironments() {
+  public static function getAvailableEnvironments() {
     return array(
       'live' => 'Live environment',
       'test' => 'Test environment',
@@ -582,7 +582,7 @@ class Sermepa {
    * @return array
    *   Return an array with all available transaction types.
    */
-  public function getAvailableTransactionTypes() {
+  public static function getAvailableTransactionTypes() {
     return array(
       '1' => 'Authorization',
       '2' => 'Pre-authorization',
