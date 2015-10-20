@@ -421,7 +421,8 @@ class Sermepa {
   /**
    * Handle the response of the payment transaction.
    *
-   * Messages from "Guía de Comercios TPV Virtual SIS" v5.19.
+   * Messages from "Manual de integración con el TPV Virtual para comercios con
+   *  conexión por Redireccin" v1.0 - 10/06/2015.
    *
    * @param integer $response
    *   The response feedback code.
@@ -437,6 +438,8 @@ class Sermepa {
       switch ((int) $response) {
         case 900:
           $msg = 'Transaction authorized for returns and confirmations';
+          break;
+
         case 101:
           $msg = 'Expired card';
           break;
@@ -445,17 +448,12 @@ class Sermepa {
           $msg = 'Temporary exception card or on suspicion of fraud';
           break;
 
-        case 104:
-        case 9104:
-          $msg = 'Operation not allowed for the card or terminal';
+        case 106:
+          $msg = 'PIN tries exceeded';
           break;
 
-        case 116:
-          $msg = 'Asset insufficient';
-          break;
-
-        case 118:
-          $msg = 'Card not registered';
+        case 125:
+          $msg = 'Not effective card';
           break;
 
         case 129:
@@ -482,13 +480,101 @@ class Sermepa {
           $msg = 'Temporary or emergency card on suspicion of withdrawal card fraud';
           break;
 
-        case 912:
-        case 9912:
-          $msg = 'Issuer not available';
+        case 904:
+          $msg = 'Store not affiliated to FUC';
+          break;
+
+        case 909:
+          $msg = 'System error';
           break;
 
         case 913:
           $msg = 'Order duplicated';
+          break;
+
+        case 944:
+          $msg = 'Wrong session';
+          break;
+
+        case 950:
+          $msg = 'Return operation not allowed';
+          break;
+
+        case 9912:
+        case 912:
+          $msg = 'Issuer not available';
+          break;
+
+        case 9064:
+          $msg = 'Wrong number of places in the card';
+          break;
+
+        case 9078:
+          $msg = 'Not allowed operation type for that card';
+          break;
+
+        case 9093:
+          $msg = 'Nonexistent card';
+          break;
+
+        case 9094:
+          $msg = 'International servers are rejected';
+          break;
+
+        case 9104:
+          $msg = 'Store with "owner safe" and the owner without secure shopping key';
+          break;
+
+        case 9218:
+          $msg = 'Store does not allow safe operations per input';
+          break;
+
+        case 9253:
+          $msg = 'Card does not do the check-digit;
+          break;
+
+        case 9256:
+          $msg = 'The store can not to make pre-authorization';
+          break;
+
+        case 9257:
+          $msg = 'This card does not allow preauthorization operations';
+          break;
+
+        case 9261:
+          $msg = 'Operation stopped for exceeding the control of restrictions on entry to the SIS';
+          break;
+
+        case 9913:
+          $msg = 'Error in store confirmation sent to the Virtual TPV';
+          break;
+
+        case 9914:
+          $msg = '"KO" store confirmation';
+          break;
+
+        case 9915:
+          $msg = 'Payment canceled by user;
+          break;
+
+        case 9928:
+          $msg = 'Cancellation of deferred authorization by SIS';
+          break;
+
+        case 9929:
+          $msg = 'Cancellation of deferred authorization by the store';
+          break;
+
+        case 9997:
+          $msg = 'Another transaction is being processed in SIS with the same card';
+          break;
+
+        case 9998:
+          $msg = 'Operation in card data request process';
+          break;
+
+        case :
+          $msg = 'Operation has been redirected issuer to authenticate';
           break;
 
         default:

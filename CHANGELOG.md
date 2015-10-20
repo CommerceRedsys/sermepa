@@ -1,3 +1,8 @@
+Sermepa - dev Oct 2015
+======================
+- Updated the payment transaction messages.
+- Updated enviroment constants with the new values.
+
 Sermepa - master Oct 2013
 =========================
 - Updated demo.
