@@ -1,5 +1,6 @@
 Sermepa - dev Oct 2015
 ======================
+- Removed old documentation.
 - Updated the payment transaction messages.
 - Updated enviroment constants with the new values.
 
