@@ -37,12 +37,12 @@ class Sermepa {
   /**
    * Constant indicating the test environment.
    */
-  const SERMEPA_URL_TEST = 'https://sis-t.sermepa.es:25443/sis/realizarPago';
+  const SERMEPA_URL_TEST = 'https://sis-t.redsys.es:25443/sis/realizarPago';
 
   /**
    * Constant indicating the live environment.
    */
-  const SERMEPA_URL_LIVE = 'https://sis.sermepa.es/sis/realizarPago';
+  const SERMEPA_URL_LIVE = 'https://sis.redsys.es/sis/realizarPago';
 
   /**
    * Required. To Euros the last two positions are considered decimal.
