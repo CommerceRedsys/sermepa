@@ -11,21 +11,28 @@
 
   try {
     // Create a new instance and initialize it.
-    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantSignature'], $settings['environment'], $settings['encryptionMethod']);
+    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
 
+    // Get response data.
     if ($feedback = $gateway->getFeedback()) {
-      // Load the payment from ???? and set the necessary values.
-      $payment_id = $feedback['Ds_MerchantData'];
-      $amount = 15050;
+      // Check if the signatures are valid.
+      if ($gateway->checkFeedback($feedback)) {
+        // Load the payment from ???? and store the necessary values.
+        $payment_id = $gateway->getFeedbackValue('Ds_MerchantData');
 
-      if ($gateway->checkFeedback($feedback, $amount)) {
-        // Transaction valid. Save your data here.
-        $transaction_remote_id = $feedback['Ds_AuthorisationCode'];
-        $transaction_message = $gateway->handleResponse($feedback['Ds_Response']);
+        $response_code = (int) $gateway->getFeedbackValue('Ds_Response');
+        if ($response_code <= 99) {
+          // Transaction valid. Save your data here.
+          $transaction_remote_id = $gateway->getFeedbackValue('Ds_AuthorisationCode');
+          $transaction_message = $gateway->handleResponse($response_code);
+        }
+        else {
+          // Transaction no valid. Save your data here.
+          $transaction_message = $gateway->handleResponse($response_code);
+        }
       }
       else {
-        // Transaction no valid. Save your data here.
-        $transaction_message = $gateway->handleResponse($feedback['Ds_Response']);
+        // Bad feedback response.
       }
     }
   }
