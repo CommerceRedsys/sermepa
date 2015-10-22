@@ -1,5 +1,6 @@
 Sermepa - dev Oct 2015
 ======================
+- Added license.
 - Added support to SHA256, SHA-1 is not supported any more.
 - Updated available consumer languages and transaction types.
 - Removed old documentation.
