@@ -50,7 +50,12 @@
 <?php
   // Load settings and class.
   include_once "settings.php";
+
+  include_once "../src/SermepaException.php";
+  include_once "../src/SermepaInterface.php";
   include_once "../src/Sermepa.php";
+
+  use facine\Payment\Sermepa;
 
   try {
     // Create a new instance and initialize it.
