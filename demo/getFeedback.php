@@ -16,7 +16,7 @@
 
   try {
     // Create a new instance and initialize it.
-    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
+    $gateway = Sermepa::configure($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
 
     // Get response data.
     if ($feedback = $gateway->getFeedback()) {

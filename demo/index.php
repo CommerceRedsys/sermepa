@@ -59,7 +59,14 @@
 
   try {
     // Create a new instance and initialize it.
-    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
+    $gateway = Sermepa::configure($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
+    // Or...
+    //$gateway = new Sermepa();
+    //$gateway-Â>setTitular($settings['titular'])
+    //        ->setMerchantCode($settings['merchantCode'])
+    //        ->setTerminal($settings['terminal'])
+    //        ->setMerchantPassword($settings['merchantPassword'])
+    //        ->setEnvironment($settings['environment']);
 
     // Load the payment from ???? and set the necessary values.
     $amount = 15050;

@@ -4,10 +4,68 @@
  * @file
  * Contains \facine\Payment\SermepaInterface.
  */
- 
+
 namespace facine\Payment;
 
 interface SermepaInterface {
+  /**
+   * Static constructor/factory.
+   *
+   * @param string $titular
+   *   This field will display to the holder on the screen confirmation of
+   *   purchase.
+   *
+   * @param string $merchant_code
+   *   FUC Code assigned to commerce.
+   *
+   * @param string $merchant_terminal
+   *   Terminal number will be assigned your bank. 3 is considered the maximum
+   *   length.
+   *
+   * @param string $merchant_password
+   *   Commerce SHA256 password.
+   *
+   * @param string $environment
+   *   Environment: live, test or an override url.
+   *
+   * @param array $options
+   *   (Optional) An associative array of additional options, with the following
+   *   elements:
+   *   - amount: To Euros the last two places are considered decimals.
+   *   - authorisation_code: Represents the authorization code necessary to
+   *       identify a recurring transaction returns successively in subsequent
+   *       recurring transactions.
+   *   - charge_expiry_date: Format yyyy-mm-dd date for recurring transactions.
+   *   - consumer_language: The value 000, indicating that there isn't
+   *       determined the customer's language.
+   *   - currency: Numeric currency code.
+   *   - date_frecuency: Frequency in days for recurring transactions, recurring
+   *       deferred.
+   *   - merchant_data: Field for commerce to be included in the data sent by
+   *       the "on-line" answer to trade if you have chosen this option.
+   *   - merchant_name: Commerce name will appear on the ticket that the client.
+   *   - merchant_url: URL of commerce that will receive a post with transaction
+   *       data.
+   *   - order: Order identifier. The first 4 digits must be numeric.
+   *   - product_description: This field will display to the holder on the
+   *       screen confirmation of purchase.
+   *   - sum_total: Represents the sum of the amounts of installments. The latter
+   *       two are considered decimal positions.
+   *   - transaction_date: Format yyyy-MM-dd. Represents the date of subsequent
+   *       recurrent operation is required to identify the transaction in
+   *       successive returns from continuing operations.
+   *   - transaction_type: What type of transaction it is.
+   *   - url_ko: If you send will be used as ignoring the configured URLKO the
+   *       administration module if you have it.
+   *   - url_ok: If you send will be used as ignoring the configured URLOK the
+   *       administration module if you have it.
+   *
+   * @return \facine\Payment\Sermepa
+   *
+   * @throws \facine\Payment\SermepaException
+   */
+  public static function configure($titular, $merchant_code, $merchant_terminal, $merchant_password, $environment, $options = array());
+
   /**
    * Compose the merchant parameters.
    *
