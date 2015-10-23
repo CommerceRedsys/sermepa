@@ -40,6 +40,7 @@
       }
       .content {
           padding: 10px 0;
+          overflow-x: auto;
       }
     </style>
   </head>
@@ -49,11 +50,16 @@
 <?php
   // Load settings and class.
   include_once "settings.php";
+
+  include_once "../src/SermepaException.php";
+  include_once "../src/SermepaInterface.php";
   include_once "../src/Sermepa.php";
+
+  use facine\Payment\Sermepa;
 
   try {
     // Create a new instance and initialize it.
-    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantSignature'], $settings['environment'], $settings['encryptionMethod']);
+    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
 
     // Load the payment from ???? and set the necessary values.
     $amount = 15050;
@@ -61,41 +67,59 @@
     $payment_id = 1;
     $product_description = 'My example!';
     $consumer_language = '001';
+    $transaction_type = 0;
+    $feedback_url = 'http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'getFeedback.php';
+    $ko_url = 'http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'ko.php';
+    $ok_url = 'http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . 'ok.php';
 
     $gateway->setAmount($amount)
             ->setCurrency($currency)
             ->setOrder(substr(date('ymdHis') . 'Id' . $payment_id, -12, 12))
             ->setProductDescription($product_description)
             ->setConsumerLanguage($consumer_language)
-            ->setMerchantData($payment_id);
+            ->setMerchantData($payment_id)
+            ->setTransactionType($transaction_type)
+            ->setMerchantURL($feedback_url)
+            ->setUrlKO($ko_url)
+            ->setUrlOK($ok_url);
 
     // Get the trasaction fields for the sermepa form.
-    if ($fields = $gateway->getFields()) {
+    $parameters = $gateway->composeMerchantParameters();
+    if ($parameters) {
       $languages = $gateway->getAvailableConsumerLanguages();
       $currencies = $gateway->getAvailableCurrencies();
+      $transaction_types = $gateway->getAvailableTransactionTypes();
       $output = '        <h1>Payment data!</h1>';
       $output .= '<p>';
+      $output .= 'Environment: ' . $gateway->getEnvironment() . '<br />';
+      $output .= 'Order: ' . $gateway->getOrder() . '<br />';
       $output .= 'Amount: ' . number_format($amount / 100, 2, ',', '') . '<br />';
       $output .= 'Currency: ' . $currencies[$currency] . '<br />';
       $output .= 'Payment identifier: ' . $payment_id . '<br />';
       $output .= 'Product description: ' . $product_description . '<br />';
       $output .= 'Consumer language: ' . $languages[$consumer_language] . '<br />';
+      $output .= 'Transaction type: ' . $transaction_types[$transaction_type] . '<br />';
+      $output .= 'Feedback URL: ' . $feedback_url . '<br />';
+      $output .= 'KO URL: ' . $ko_url . '<br />';
+      $output .= 'OK URL: ' . $ok_url . '<br />';
       $output .= '</p>';
       $output .= '<h1>Fields to send!</h1>';
-      $output .= '<form action="' . $gateway->getEnvironment() . '" method="post" id="' . $gateway->getOrder() . '">';
+      $output .= '<form action="' . $gateway->getEnvironment() . '" method="POST" id="' . $gateway->getOrder() . '">';
       $output .= '<p>';
-      foreach ($fields as $key => $value) {
-        $output .= '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-        $output .= $key . ': ' . $value . '<br />';
-      }
+      $output .= 'Ds_Merchant_SignatureVersion: ' . $gateway->getSignatureVersion() . '<br /><br />';
+      $output .= 'Ds_Merchant_MerchantParameters: ' . $parameters . '<br /><br />';
+      $output .= 'Ds_Merchant_Signature: ' . $gateway->composeMerchantSignature() . '<br /><br />';
       $output .= '<p>';
+      $output .= '<input type="hidden" name="Ds_SignatureVersion" value="' . $gateway->getSignatureVersion() . '">';
+      $output .= '<input type="hidden" name="Ds_MerchantParameters" value="' . $parameters . '">';
+      $output .= '<input type="hidden" name="Ds_Signature" value="' . $gateway->composeMerchantSignature() . '">';
       $output .= '<input type="submit" value="Send">';
       $output .= '</p>';
       $output .= '</p>';
       $output .= '</form><br />';
     }
     else {
-      $output = '        <h1>Error</h1><p>Failed collecting the information necessary to send to Sermepa.</p><p>Please check your settings.</p><br />';
+      $output = '        <h1>Error</h1><p>Failed collecting all information necessary to send to Sermepa.</p><p>Please check your settings and/or data.</p><br />';
     }
 
     echo $output;
