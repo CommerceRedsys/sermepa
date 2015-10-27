@@ -9,6 +9,84 @@ namespace facine\Payment;
 
 interface SermepaInterface {
   /**
+   * Get all available languages.
+   *
+   * @return array
+   *   Return an array with all available languages.
+   */
+  public static function getAvailableConsumerLanguages();
+
+  /**
+   * Get all available currencies.
+   *
+   * @return array
+   *   Return an array with all available currencies.
+   */
+  public static function getAvailableCurrencies();
+
+  /**
+   * Get all available environments.
+   *
+   * @return array
+   *   Return an array with all available environments.
+   */
+  public static function getAvailableEnvironments();
+
+  /**
+   * Get all available transaction types.
+   *
+   * @return array
+   *   Return an array with all available transaction types.
+   */
+  public static function getAvailableTransactionTypes();
+
+  /**
+   * Get merchant code maxlength.
+   *
+   * @return integer
+   *   Return merchant code maxlength.
+   */
+  public static function getMerchantCodeMaxLenght();
+
+  /**
+   * Get merchant name maxlength.
+   *
+   * @return integer
+   *   Return merchant name maxlenght.
+   */
+  public static function getMerchantNameMaLength();
+
+  /**
+   * Get merchant password maxlength.
+   *
+   * @return integer
+   *   Return merchant password maxlenght.
+   */
+  public static function getMerchantPasswordMaxLength();
+
+  /**
+   * Get merchant terminal maxlength.
+   *
+   * @return integer
+   *   Return merchant terminal maxlenght.
+   */
+  public static function getMerchantTerminalMaxLength();
+
+  /**
+   * Check if callback feedback is valid.
+   *
+   * @param array $feedback
+   *   An associative array containing the Sermepa feedback taken from the
+   *   $_GET and $_POST superglobals, excluding 'q'.
+   *
+   * @return boolean
+   *   Boolean indicating whether or not the transaction was valdiated.
+   *
+   * @throws \facine\Payment\SermepaException
+   */
+  public function checkFeedback($feedback);
+
+  /**
    * Compose the merchant parameters.
    *
    * @return mixed
@@ -47,20 +125,6 @@ interface SermepaInterface {
   public function getFeedback();
 
   /**
-   * Check if callback feedback is valid.
-   *
-   * @param array $feedback
-   *   An associative array containing the Sermepa feedback taken from the
-   *   $_GET and $_POST superglobals, excluding 'q'.
-   *
-   * @return boolean
-   *   Boolean indicating whether or not the transaction was valdiated.
-   *
-   * @throws \facine\Payment\SermepaException
-   */
-  public function checkFeedback($feedback);
-
-  /**
    * Handle the response of the payment transaction.
    *
    * Messages from "Manual de integración con el TPV Virtual para comercios con
@@ -73,38 +137,6 @@ interface SermepaInterface {
    *   The handle response message.
    */
   public function handleResponse($response = NULL);
-
-  /**
-   * Get all available languages.
-   *
-   * @return array
-   *   Return an array with all available languages.
-   */
-  public static function getAvailableConsumerLanguages();
-
-  /**
-   * Get all available currencies.
-   *
-   * @return array
-   *   Return an array with all available currencies.
-   */
-  public static function getAvailableCurrencies();
-
-  /**
-   * Get all available environments.
-   *
-   * @return array
-   *   Return an array with all available environments.
-   */
-  public static function getAvailableEnvironments();
-
-  /**
-   * Get all available transaction types.
-   *
-   * @return array
-   *   Return an array with all available transaction types.
-   */
-  public static function getAvailableTransactionTypes();
 
   /**
    * Setter for Sermepa::DsMerchantAmount property.

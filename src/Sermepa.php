@@ -40,6 +40,26 @@ class Sermepa implements SermepaInterface {
   const SERMEPA_DS_SIGNATUREVERSION = 'HMAC_SHA256_V1';
 
   /**
+   * Constant indicating the merchant name maxlength.
+   */
+  const SERMEPA_DS_MERCHANT_MERCHANTNAME_MAXLENGTH = 25;
+
+  /**
+   * Constant indicating the merchant name maxlength.
+   */
+  const SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH = 9;
+
+  /**
+   * Constant indicating the merchant password maxlength.
+   */
+  const SERMEPA_DS_MERCHANT_PASSWORD_MAXLENGTH = 32;
+
+  /**
+   * Constant indicating the merchant termina maxlength.
+   */
+  const SERMEPA_DS_MERCHANT_TERMINAL_MAXLENGTH = 3;
+
+  /**
    * Constant indicating the test environment.
    */
   const SERMEPA_URL_TEST = 'https://sis-t.redsys.es:25443/sis/realizarPago';
@@ -414,6 +434,132 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
+  public static function getAvailableConsumerLanguages() {
+    return array(
+      '001' => 'Spanish',
+      '002' => 'English',
+      '003' => 'Catalan',
+      '004' => 'French',
+      '005' => 'German',
+      '006' => 'Dutch',
+      '007' => 'Italian',
+      '008' => 'Swedish',
+      '009' => 'Portuguese',
+      '010' => 'Valencian',
+      '011' => 'Polish',
+      '012' => 'Galician',
+      '013' => 'Euskera',
+      '208' => 'Danish',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAvailableCurrencies() {
+    return array(
+      '978' => 'Euro',
+      '840' => 'U.S. Dollar',
+      '826' => 'Pound',
+      '392' => 'Yen',
+      '032' => 'Southern Argentina',
+      '124' => 'Canadian Dollar',
+      '152' => 'Chilean Peso',
+      '170' => 'Colombian Peso',
+      '356' => 'India Rupee',
+      '484' => 'New Mexican Peso',
+      '604' => 'Soles',
+      '756' => 'Swiss Franc',
+      '986' => 'Brazilian Real',
+      '937' => 'Bolivar',
+      '949' => 'Turkish lira',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAvailableEnvironments() {
+    return array(
+      'live' => 'Live environment',
+      'test' => 'Test environment',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAvailableTransactionTypes() {
+    return array(
+      '0' => 'Authorization',
+      '1' => 'Pre-authorization',
+      '2' => 'Confirmation of preauthorization',
+      '3' => 'Automatic return',
+      '5' => 'Recurring transaction',
+      '6' => 'Successive transaction',
+      '7' => 'Pre-authentication',
+      '8' => 'Confirmation of pre-authentication',
+      '9' => 'Annulment of preauthorization',
+      'O' => 'Authorization delayed',
+      'P' => 'Confirmation of authorization in deferred',
+      'Q' => 'Delayed authorization Rescission',
+      'R' => 'Initial recurring deferred released',
+      'S' => 'Successively recurring deferred released',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getMerchantCodeMaxLenght() {
+    return self::SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getMerchantNameMaxLength() {
+    return self::SERMEPA_DS_MERCHANT_MERCHANTNAME_MAXLENGTH;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getMerchantPasswordMaxLength() {
+    return self::SERMEPA_DS_MERCHANT_PASSWORD_MAXLENGTH;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getMerchantTerminalMaxLength() {
+    return self::SERMEPA_DS_MERCHANT_TERMINAL_MAXLENGTH;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkFeedback($feedback) {
+    $status = FALSE;
+
+    $encoded_parameters = $feedback['Ds_MerchantParameters'];
+    $feedback_signature = $feedback['Ds_Signature'];
+
+    // Compose signature from feedback merchant parameters.
+    $signature_from_parameters = $this->composeMerchantSignatureFromFeedback($encoded_parameters);
+
+    // Validate if are the same signature.
+    if ($signature_from_parameters == $feedback_signature) {
+      $status = TRUE;
+    }
+
+    // Return the feedback validation.
+    return $status;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function composeMerchantParameters() {
     // Convert parameters array to JSON Object.
 
@@ -486,27 +632,6 @@ class Sermepa implements SermepaInterface {
       unset($feedback['q']);
     }
     return $feedback;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function checkFeedback($feedback) {
-    $status = FALSE;
-
-    $encoded_parameters = $feedback['Ds_MerchantParameters'];
-    $feedback_signature = $feedback['Ds_Signature'];
-
-    // Compose signature from feedback merchant parameters.
-    $signature_from_parameters = $this->composeMerchantSignatureFromFeedback($encoded_parameters);
-
-    // Validate if are the same signature.
-    if ($signature_from_parameters == $feedback_signature) {
-      $status = TRUE;
-    }
-
-    // Return the feedback validation.
-    return $status;
   }
 
   /**
@@ -666,83 +791,6 @@ class Sermepa implements SermepaInterface {
     }
 
     return $msg;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getAvailableConsumerLanguages() {
-    return array(
-      '001' => 'Spanish',
-      '002' => 'English',
-      '003' => 'Catalan',
-      '004' => 'French',
-      '005' => 'German',
-      '006' => 'Dutch',
-      '007' => 'Italian',
-      '008' => 'Swedish',
-      '009' => 'Portuguese',
-      '010' => 'Valencian',
-      '011' => 'Polish',
-      '012' => 'Galician',
-      '013' => 'Euskera',
-      '208' => 'Danish',
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getAvailableCurrencies() {
-    return array(
-      '978' => 'Euro',
-      '840' => 'U.S. Dollar',
-      '826' => 'Pound',
-      '392' => 'Yen',
-      '032' => 'Southern Argentina',
-      '124' => 'Canadian Dollar',
-      '152' => 'Chilean Peso',
-      '170' => 'Colombian Peso',
-      '356' => 'India Rupee',
-      '484' => 'New Mexican Peso',
-      '604' => 'Soles',
-      '756' => 'Swiss Franc',
-      '986' => 'Brazilian Real',
-      '937' => 'Bolivar',
-      '949' => 'Turkish lira',
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getAvailableEnvironments() {
-    return array(
-      'live' => 'Live environment',
-      'test' => 'Test environment',
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getAvailableTransactionTypes() {
-    return array(
-      '0' => 'Authorization',
-      '1' => 'Pre-authorization',
-      '2' => 'Confirmation of preauthorization',
-      '3' => 'Automatic return',
-      '5' => 'Recurring transaction',
-      '6' => 'Successive transaction',
-      '7' => 'Pre-authentication',
-      '8' => 'Confirmation of pre-authentication',
-      '9' => 'Annulment of preauthorization',
-      'O' => 'Authorization delayed',
-      'P' => 'Confirmation of authorization in deferred',
-      'Q' => 'Delayed authorization Rescission',
-      'R' => 'Initial recurring deferred released',
-      'S' => 'Successively recurring deferred released',
-    );
   }
 
   /**

@@ -1,5 +1,6 @@
-Sermepa - dev Oct 2015
+Sermepa - master Oct 2015
 ======================
+- Added: getMerchantCodeMaxLenght, getMerchantNameMaLength, getMerchantPasswordMaxLength and getMerchantTerminalMaxLength public static methods.
 - Added SermepaInterface.
 - Added license.
 - Added support to SHA256, SHA-1 is not supported any more.
