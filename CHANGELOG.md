@@ -1,4 +1,4 @@
-Sermepa - master Oct 2015
+Sermepa - v0.1 Oct 2015
 ======================
 - Renamed namespace.
 - Added: getMerchantCodeMaxLenght, getMerchantNameMaLength, getMerchantPasswordMaxLength and getMerchantTerminalMaxLength public static methods.
@@ -10,7 +10,7 @@ Sermepa - master Oct 2015
 - Updated the payment transaction messages.
 - Updated environment constants with the new values.
 
-Sermepa - master Oct 2013
+Sermepa - v0.1 Oct 2013
 =========================
 - Updated demo.
 - Added a private method to get a camel based method name based on a dash cased name.
