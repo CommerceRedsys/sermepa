@@ -8,7 +8,7 @@
  * http://www.redsys.es/wps/portal/redsys/publica/acercade/nuestrosSocios
  */
 
-namespace facine\Payment;
+namespace CommerceRedsys\Payment;
 
 /**
  * Class implementation.
@@ -252,7 +252,7 @@ class Sermepa implements SermepaInterface {
    *   - url_ok: If you send will be used as ignoring the configured URLOK the
    *       administration module if you have it.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function __construct($titular, $merchant_code, $merchant_terminal, $merchant_password, $environment, $options = array()) {
     $this->setTitular($titular)
@@ -278,7 +278,7 @@ class Sermepa implements SermepaInterface {
    * @return boolean
    *   Boolean indicating whether or not the properties was valdiated.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   private function check() {
     $validate = TRUE;
@@ -804,7 +804,7 @@ class Sermepa implements SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   protected function set($key, $value) {
     if (!property_exists($this, $key)) {

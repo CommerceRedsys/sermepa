@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \facine\Payment\SermepaInterface.
+ * Contains \CommerceRedsys\Payment\SermepaInterface.
  */
- 
-namespace facine\Payment;
+
+namespace CommerceRedsys\Payment;
 
 interface SermepaInterface {
   /**
@@ -82,7 +82,7 @@ interface SermepaInterface {
    * @return boolean
    *   Boolean indicating whether or not the transaction was valdiated.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function checkFeedback($feedback);
 
@@ -147,7 +147,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setAmount($amount);
 
@@ -168,7 +168,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setAuthorisationCode($authorisation_code);
 
@@ -189,7 +189,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setChargeExpiryDate($charge_expiry_date);
 
@@ -210,7 +210,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setConsumerLanguage($consumer_language);
 
@@ -231,7 +231,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setCurrency($currency);
 
@@ -252,7 +252,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setDateFrecuency($date_frecuency);
 
@@ -273,7 +273,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setMerchantCode($merchant_code);
 
@@ -294,7 +294,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setMerchantData($merchant_data);
 
@@ -315,7 +315,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setMerchantName($merchant_name);
 
@@ -336,7 +336,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setMerchantPassword($merchant_password);
 
@@ -357,7 +357,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setMerchantURL($merchant_url);
 
@@ -378,7 +378,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setOrder($order);
 
@@ -399,7 +399,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setProductDescription($product_description);
 
@@ -420,7 +420,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setSumTotal($sum_total);
 
@@ -441,7 +441,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setTerminal($terminal);
 
@@ -462,7 +462,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setTitular($titular);
 
@@ -483,7 +483,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setTransactionDate($transaction_date);
 
@@ -504,7 +504,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setTransactionType($transaction_type);
 
@@ -525,7 +525,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setUrlKO($url_ko);
 
@@ -546,7 +546,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setUrlOK($url_ok);
   /**
@@ -575,7 +575,7 @@ interface SermepaInterface {
    * @return Sermepa
    *   Return itself.
    *
-   * @throws \facine\Payment\SermepaException
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
   public function setEnvironment($environment);
   /**

@@ -55,7 +55,7 @@
   include_once "../src/SermepaInterface.php";
   include_once "../src/Sermepa.php";
 
-  use facine\Payment\Sermepa;
+  use CommerceRedsys\Payment\Sermepa;
 
   try {
     // Create a new instance and initialize it.

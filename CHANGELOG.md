@@ -1,5 +1,6 @@
 Sermepa - master Oct 2015
 ======================
+- Renamed namespace.
 - Added: getMerchantCodeMaxLenght, getMerchantNameMaLength, getMerchantPasswordMaxLength and getMerchantTerminalMaxLength public static methods.
 - Added SermepaInterface.
 - Added license.

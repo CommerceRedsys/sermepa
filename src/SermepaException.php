@@ -5,7 +5,7 @@
  * Implementation file for SermepaException class.
  */
 
-namespace facine\Payment;
+namespace CommerceRedsys\Payment;
 
 /**
  * Type naming the ErrorException class
