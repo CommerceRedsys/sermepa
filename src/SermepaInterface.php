@@ -46,7 +46,7 @@ interface SermepaInterface {
    * @return integer
    *   Return merchant code maxlength.
    */
-  public static function getMerchantCodeMaxLenght();
+  public static function getMerchantCodeMaxLength();
 
   /**
    * Get merchant name maxlength.

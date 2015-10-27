@@ -511,7 +511,7 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getMerchantCodeMaxLenght() {
+  public static function getMerchantCodeMaxLength() {
     return self::SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH;
   }
 
