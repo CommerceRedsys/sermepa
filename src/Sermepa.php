@@ -424,7 +424,7 @@ class Sermepa implements SermepaInterface {
    *   - Ds_Card_Type: (Optional) C for credit, D for debit.
    */
   protected function setFeedbackParameters($parameters) {
-    $this->feedbackParameters = [];
+    $this->feedbackParameters = array();
 
     foreach ($parameters as $parameter_key => $parameter_value) {
       $this->feedbackParameters[strtoupper($parameter_key)] = $parameter_value;
