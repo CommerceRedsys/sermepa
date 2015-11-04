@@ -81,6 +81,20 @@ interface SermepaInterface {
   public static function getMerchantTerminalMaxLength();
 
   /**
+   * Handle the response of the payment transaction.
+   *
+   * Messages from "Manual de integración con el TPV Virtual para comercios con
+   *  conexión por Redirección" v1.0 - 10/06/2015.
+   *
+   * @param integer $response
+   *   The response feedback code.
+   *
+   * @return string
+   *   The handle response message.
+   */
+  public static function handleResponse($response = NULL);
+
+  /**
    * Check if callback feedback signature is valid.
    *
    * @param array $feedback
@@ -159,20 +173,6 @@ interface SermepaInterface {
    *   (indicating missing or invalid Sermepa feedback).
    */
   public function getFeedback();
-
-  /**
-   * Handle the response of the payment transaction.
-   *
-   * Messages from "Manual de integración con el TPV Virtual para comercios con
-   *  conexión por Redirección" v1.0 - 10/06/2015.
-   *
-   * @param integer $response
-   *   The response feedback code.
-   *
-   * @return string
-   *   The handle response message.
-   */
-  public function handleResponse($response = NULL);
 
   /**
    * Setter for Sermepa::DsMerchantAmount property.

@@ -1,3 +1,7 @@
+Sermepa - v0.3 Nov 2015
+=======================
+- Converted handleResponse method to static.
+
 Sermepa - v0.2 Nov 2015
 =======================
 - Updated PHP requirements.

@@ -559,113 +559,7 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function areValidSignatures($feedback) {
-    $status = FALSE;
-
-    $encoded_parameters = $feedback['Ds_MerchantParameters'];
-    $feedback_signature = $feedback['Ds_Signature'];
-
-    // Compose signature from feedback merchant parameters.
-    $signature_from_parameters = $this->composeMerchantSignatureFromFeedback($encoded_parameters);
-
-    // Validate if are the same signature.
-    if ($signature_from_parameters == $feedback_signature) {
-      return TRUE;
-    }
-
-    // Return the feedback validation.
-    return $status;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function composeMerchantParameters() {
-    $parameters = $this->getParameters();
-
-    if ($parameters) {
-      $json_parameters = json_encode($parameters);
-
-      // Return encoded object parameters in base64.
-      return base64_encode($json_parameters);
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function composeMerchantSignature() {
-    // Decode SHA256 merchant password.
-    $merchant_password = base64_decode($this->DsMerchantPassword);
-
-    // Compose Ds_MerchantParameters.
-    $encoded_parameters = $this->composeMerchantParameters();
-    $order = $this->getOrder();
-
-    //  Encrypts merchant password with order number.
-    $merchant_password = $this->encryptPassword($merchant_password, $order);
-
-    // Generate a keyed hash signature using the HMAC method.
-    // PHP 5 >= 5.1.2.
-    $signature = hash_hmac('sha256', $encoded_parameters, $merchant_password, TRUE);
-
-    // Return signature in base64.
-    return base64_encode($signature);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function composeMerchantSignatureFromFeedback($encoded_parameters) {
-    // Decode SHA256 merchant password.
-    $merchant_password = base64_decode($this->DsMerchantPassword);
-
-    // Decode Ds_MerchantParameters.
-    $decoded_parameters = $this->decodeMerchantParameters($encoded_parameters);
-
-    //  Encrypts merchant password with order number.
-    $merchant_password = $this->encryptPassword($merchant_password, $decoded_parameters['Ds_Order']);
-
-    // Generate a keyed hash signature using the HMAC method.
-    // PHP 5 >= 5.1.2.
-    $signature = hash_hmac('sha256', $encoded_parameters, $merchant_password, TRUE);
-
-    // Return signature in base64.
-    return strtr(base64_encode($signature), '+/', '-_');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function decodeMerchantParameters($encoded_parameters) {
-    // Decode Ds_MerchantParameters.
-    $decoded_parameters = base64_decode(strtr($encoded_parameters, '-_', '+/'));
-
-    // Return the JSON decoded parameters.
-    return json_decode($decoded_parameters, TRUE);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFeedback() {
-    $feedback = FALSE;
-    if (isset($_REQUEST['Ds_SignatureVersion'])) {
-      // Prepare the feedback values sent by Sermepa for processing. We don't
-      // use $_REQUEST since this includes the $_SESSION variables.
-      $feedback = $_GET + $_POST;
-      unset($feedback['q']);
-    }
-    return $feedback;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function handleResponse($response = NULL) {
+  public static function handleResponse($response = NULL) {
     if ((int) $response <= 99) {
       $msg = 'Transaction authorized for payments and preauthorizations';
     }
@@ -819,6 +713,112 @@ class Sermepa implements SermepaInterface {
     }
 
     return $msg;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function areValidSignatures($feedback) {
+    $status = FALSE;
+
+    $encoded_parameters = $feedback['Ds_MerchantParameters'];
+    $feedback_signature = $feedback['Ds_Signature'];
+
+    // Compose signature from feedback merchant parameters.
+    $signature_from_parameters = $this->composeMerchantSignatureFromFeedback($encoded_parameters);
+
+    // Validate if are the same signature.
+    if ($signature_from_parameters == $feedback_signature) {
+      return TRUE;
+    }
+
+    // Return the feedback validation.
+    return $status;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function composeMerchantParameters() {
+    $parameters = $this->getParameters();
+
+    if ($parameters) {
+      $json_parameters = json_encode($parameters);
+
+      // Return encoded object parameters in base64.
+      return base64_encode($json_parameters);
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function composeMerchantSignature() {
+    // Decode SHA256 merchant password.
+    $merchant_password = base64_decode($this->DsMerchantPassword);
+
+    // Compose Ds_MerchantParameters.
+    $encoded_parameters = $this->composeMerchantParameters();
+    $order = $this->getOrder();
+
+    //  Encrypts merchant password with order number.
+    $merchant_password = $this->encryptPassword($merchant_password, $order);
+
+    // Generate a keyed hash signature using the HMAC method.
+    // PHP 5 >= 5.1.2.
+    $signature = hash_hmac('sha256', $encoded_parameters, $merchant_password, TRUE);
+
+    // Return signature in base64.
+    return base64_encode($signature);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function composeMerchantSignatureFromFeedback($encoded_parameters) {
+    // Decode SHA256 merchant password.
+    $merchant_password = base64_decode($this->DsMerchantPassword);
+
+    // Decode Ds_MerchantParameters.
+    $decoded_parameters = $this->decodeMerchantParameters($encoded_parameters);
+
+    //  Encrypts merchant password with order number.
+    $merchant_password = $this->encryptPassword($merchant_password, $decoded_parameters['Ds_Order']);
+
+    // Generate a keyed hash signature using the HMAC method.
+    // PHP 5 >= 5.1.2.
+    $signature = hash_hmac('sha256', $encoded_parameters, $merchant_password, TRUE);
+
+    // Return signature in base64.
+    return strtr(base64_encode($signature), '+/', '-_');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function decodeMerchantParameters($encoded_parameters) {
+    // Decode Ds_MerchantParameters.
+    $decoded_parameters = base64_decode(strtr($encoded_parameters, '-_', '+/'));
+
+    // Return the JSON decoded parameters.
+    return json_decode($decoded_parameters, TRUE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFeedback() {
+    $feedback = FALSE;
+    if (isset($_REQUEST['Ds_SignatureVersion'])) {
+      // Prepare the feedback values sent by Sermepa for processing. We don't
+      // use $_REQUEST since this includes the $_SESSION variables.
+      $feedback = $_GET + $_POST;
+      unset($feedback['q']);
+    }
+    return $feedback;
   }
 
   /**
