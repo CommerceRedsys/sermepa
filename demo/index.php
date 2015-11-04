@@ -59,7 +59,7 @@
 
   try {
     // Create a new instance and initialize it.
-    $gateway = new Sermepa($settings['titular'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
+    $gateway = new Sermepa($settings['name'], $settings['merchantCode'], $settings['terminal'], $settings['merchantPassword'], $settings['environment']);
 
     // Load the payment from ???? and set the necessary values.
     $amount = 15050;

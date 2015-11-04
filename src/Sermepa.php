@@ -141,6 +141,18 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantPassword;
 
   /**
+   * Optional. This variable is used to skip the payment method selection when
+   * more than one is enabled for the sermepa account.
+   * C - Credit card.
+   * D - Domiciliation (Only banks that support it).
+   * R - Bank transfer (Only banks that support it).
+   * T - Iupay card (Must be active this payment method).
+   * O - Iupay (Must be active this payment method).
+   * V - v.me (Must be active this payment method).
+   */
+  private $DsMerchantPaymentMethod;
+
+  /**
    * Optional. 125 is considered its maximum length. This field will display
    * to the holder on the screen confirmation of purchase.
    */
@@ -195,12 +207,6 @@ class Sermepa implements SermepaInterface {
   private $environment;
 
   /**
-   * An associative array containing the Sermepa feedback transaction
-   * parameters.
-   */
-  private $feedbackParameters;
-
-  /**
    * Initialize the instance.
    *
    * @param string $titular
@@ -239,6 +245,14 @@ class Sermepa implements SermepaInterface {
    *   - merchant_url: URL of commerce that will receive a post with transaction
    *       data.
    *   - order: Order identifier. The first 4 digits must be numeric.
+   *   - payment_method: Payment method selection when more than one is enabled
+   *       for the sermepa account.
+   *       C - Credit card.
+   *       D - Domiciliation (Only banks that support it).
+   *       R - Bank transfer (Only banks that support it).
+   *       T - Iupay card (Must be active this payment method).
+   *       O - Iupay (Must be active this payment method).
+   *       V - v.me (Must be active this payment method).
    *   - product_description: This field will display to the holder on the
    *       screen confirmation of purchase.
    *   - sum_total: Represents the sum of the amounts of installments. The latter
@@ -325,7 +339,7 @@ class Sermepa implements SermepaInterface {
    * @return string
    *   Return encrypted order number with decoded SHA256 password.
    */
-  private function getEncryptedPassword($merchant_password, $order_number) {
+  private function encryptPassword($merchant_password, $order_number) {
     // Set default IV value.
     // byte [] IV = {0, 0, 0, 0, 0, 0, 0, 0}.
     $bytes = array(0, 0, 0, 0, 0, 0, 0, 0);
@@ -360,6 +374,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_MerchantName' => $this->DsMerchantMerchantName,
       'Ds_Merchant_MerchantURL' => $this->DsMerchantMerchantURL,
       'Ds_Merchant_Order' => $this->DsMerchantOrder,
+      'Ds_Merchant_PayMethod' => $this->DsMerchantPaymentMethod,
       'Ds_Merchant_ProductDescription' => $this->DsMerchantProductDescription,
       'Ds_Merchant_SumTotal' => $this->DsMerchantSumTotal,
       'Ds_Merchant_Terminal' => $this->DsMerchantTerminal,
@@ -401,34 +416,25 @@ class Sermepa implements SermepaInterface {
   }
 
   /**
-   * Store the feedback parameters.
+   * Global setter.
    *
-   * @param array $parameters
-   *   An associative array of feedback parameters values:
-   *   - Ds_Date: Transaction date (dd/mm/yyyy).
-   *   - Ds_Hour: Transaction time (HH:mm).
-   *   - Ds_Amount: Same of the transaction.
-   *   - Ds_Currency: Same of the transaction.
-   *   - Ds_Order: Same of the transaction.
-   *   - Ds_MerchantCode: Same of the transaction.
-   *   - Ds_Terminal: Assigned by Sermepa.
-   *   - Ds_Response: Response values, see $this->handleResponse.
-   *   - Ds_MerchantData: Optional sended from commerce form.
-   *   - Ds_SecurePayment: 0 for no secure payment, 1 for secure.
-   *   - Ds_TrasactionType: Trasaction type sended from commerce form.
-   *   - Ds_Card_Country: (Optional) Country of issuance of the card that has
-   *       tried to make the payment..
-   *   - Ds_AuthorisationCode: (Optional) Assigned authorisation code.
-   *   - Ds_ConsumerLanguage: (Optional) 0 indicates that has not been
-   *       determined the customer's language..
-   *   - Ds_Card_Type: (Optional) C for credit, D for debit.
+   * @param string $key
+   *   Name of the property.
+   * @param mixed $value
+   *   Value to set.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   * @throws \CommerceRedsys\Payment\SermepaException
    */
-  protected function setFeedbackParameters($parameters) {
-    $this->feedbackParameters = [];
-
-    foreach ($parameters as $parameter_key => $parameter_value) {
-      $this->feedbackParameters[strtoupper($parameter_key)] = $parameter_value;
+  protected function set($key, $value) {
+    if (!property_exists($this, $key)) {
+      throw new SermepaException('The property ' . $key . ' is not defined.', self::UNDEFINED_PARAM);
     }
+    $this->{$key} = $value;
+
+    return $this;
   }
 
   /**
@@ -489,6 +495,20 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
+  public static function getAvailablePaymentMethods() {
+    return array(
+      'C' => 'Credit card',
+      'D' => 'Domiciliation',
+      'R' => 'Bank transfer',
+      'T' => 'Iupay card',
+      'O' => 'Iupay',
+      'V' => 'v.me',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getAvailableTransactionTypes() {
     return array(
       '0' => 'Authorization',
@@ -539,7 +559,7 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function checkFeedback($feedback) {
+  public function areValidSignatures($feedback) {
     $status = FALSE;
 
     $encoded_parameters = $feedback['Ds_MerchantParameters'];
@@ -550,7 +570,7 @@ class Sermepa implements SermepaInterface {
 
     // Validate if are the same signature.
     if ($signature_from_parameters == $feedback_signature) {
-      $status = TRUE;
+      return TRUE;
     }
 
     // Return the feedback validation.
@@ -561,8 +581,6 @@ class Sermepa implements SermepaInterface {
    * {@inheritdoc}
    */
   public function composeMerchantParameters() {
-    // Convert parameters array to JSON Object.
-
     $parameters = $this->getParameters();
 
     if ($parameters) {
@@ -584,14 +602,15 @@ class Sermepa implements SermepaInterface {
     $merchant_password = base64_decode($this->DsMerchantPassword);
 
     // Compose Ds_MerchantParameters.
-    $merchant_parameters = $this->composeMerchantParameters();
+    $encoded_parameters = $this->composeMerchantParameters();
+    $order = $this->getOrder();
 
     //  Encrypts merchant password with order number.
-    $merchant_password = $this->getEncryptedPassword($merchant_password, $this->getOrder());
+    $merchant_password = $this->encryptPassword($merchant_password, $order);
 
     // Generate a keyed hash signature using the HMAC method.
     // PHP 5 >= 5.1.2.
-    $signature = hash_hmac('sha256', $merchant_parameters, $merchant_password, TRUE);
+    $signature = hash_hmac('sha256', $encoded_parameters, $merchant_password, TRUE);
 
     // Return signature in base64.
     return base64_encode($signature);
@@ -605,12 +624,10 @@ class Sermepa implements SermepaInterface {
     $merchant_password = base64_decode($this->DsMerchantPassword);
 
     // Decode Ds_MerchantParameters.
-    $decoded_parameters = base64_decode(strtr($encoded_parameters, '-_', '+/'));
-    // Save the feedback decoded parameters.
-    $this->setFeedbackParameters(json_decode($decoded_parameters, TRUE));
+    $decoded_parameters = $this->decodeMerchantParameters($encoded_parameters);
 
     //  Encrypts merchant password with order number.
-    $merchant_password = $this->getEncryptedPassword($merchant_password, $this->getFeedbackValue('Ds_Order'));
+    $merchant_password = $this->encryptPassword($merchant_password, $decoded_parameters['Ds_Order']);
 
     // Generate a keyed hash signature using the HMAC method.
     // PHP 5 >= 5.1.2.
@@ -618,6 +635,17 @@ class Sermepa implements SermepaInterface {
 
     // Return signature in base64.
     return strtr(base64_encode($signature), '+/', '-_');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function decodeMerchantParameters($encoded_parameters) {
+    // Decode Ds_MerchantParameters.
+    $decoded_parameters = base64_decode(strtr($encoded_parameters, '-_', '+/'));
+
+    // Return the JSON decoded parameters.
+    return json_decode($decoded_parameters, TRUE);
   }
 
   /**
@@ -794,33 +822,13 @@ class Sermepa implements SermepaInterface {
   }
 
   /**
-   * Global setter.
-   *
-   * @param string $key
-   *   Name of the property.
-   * @param mixed $value
-   *   Value to set.
-   *
-   * @return Sermepa
-   *   Return itself.
-   *
-   * @throws \CommerceRedsys\Payment\SermepaException
-   */
-  protected function set($key, $value) {
-    if (!property_exists($this, $key)) {
-      throw new SermepaException('The property ' . $key . ' is not defined.', self::UNDEFINED_PARAM);
-    }
-    $this->{$key} = $value;
-    return $this;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function setAmount($amount) {
     if (!preg_match('/^([0-9]+)$/i', $amount) || strlen($amount) > 12) {
       throw new SermepaException('The specified Ds_Merchant_Amount: ' . $amount . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantAmount', $amount);
   }
 
@@ -838,6 +846,7 @@ class Sermepa implements SermepaInterface {
     if (!preg_match('/^([0-9]{6})$/i', $authorisation_code)) {
       throw new SermepaException('The specified Ds_Merchant_AuthorisationCode: ' . $authorisation_code . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantAuthorisationCode', $authorisation_code);
   }
 
@@ -856,6 +865,7 @@ class Sermepa implements SermepaInterface {
         strtotime(date("Y-m-d", strtotime($charge_expiry_date))) <= time()) {
       throw new SermepaException('The specified Ds_Merchant_ChargeExpiryDate: ' . $charge_expiry_date . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantChargeExpiryDate', $charge_expiry_date);
   }
 
@@ -874,6 +884,7 @@ class Sermepa implements SermepaInterface {
         !array_key_exists($consumer_language, $this->getAvailableConsumerLanguages())) {
       throw new SermepaException('The specified Ds_Merchant_ConsumerLanguage: ' . $consumer_language . ' is not valid/available.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantConsumerLanguage', $consumer_language);
   }
 
@@ -891,6 +902,7 @@ class Sermepa implements SermepaInterface {
     if (!array_key_exists($currency, $this->getAvailableCurrencies())) {
       throw new SermepaException('The specified Ds_Merchant_Currency: ' . $currency . ' is not valid/available.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantCurrency', $currency);
   }
 
@@ -908,6 +920,7 @@ class Sermepa implements SermepaInterface {
     if (!preg_match('/^([0-9]+)$/i', $date_frecuency) && strlen($date_frecuency) > 5) {
       throw new SermepaException('The specified Ds_Merchant_DateFrecuency: ' . $date_frecuency . ' is too long.', self::TOOLONG_PARAM);
     }
+
     return $this->set('DsMerchantDateFrecuency', $date_frecuency);
   }
 
@@ -925,6 +938,7 @@ class Sermepa implements SermepaInterface {
     if (strlen($merchant_code) != 9) {
       throw new SermepaException('The specified Ds_Merchant_MerchantCode: ' . $merchant_code . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantMerchantCode', $merchant_code);
   }
 
@@ -942,6 +956,7 @@ class Sermepa implements SermepaInterface {
     if (strlen($merchant_data) > 1024) {
       throw new SermepaException('The specified Ds_Merchant_MerchantData: ' . $merchant_data . ' is too long.', self::TOOLONG_PARAM);
     }
+
     return $this->set('DsMerchantMerchantData', $merchant_data);
   }
 
@@ -959,6 +974,7 @@ class Sermepa implements SermepaInterface {
     if (strlen($merchant_name) > 25) {
       throw new SermepaException('The specified Ds_Merchant_MerchantName: ' . $merchant_name . ' is too long.', self::TOOLONG_PARAM);
     }
+
     return $this->set('DsMerchantMerchantName', $merchant_name);
   }
 
@@ -976,6 +992,7 @@ class Sermepa implements SermepaInterface {
     if (!isset($merchant_password)) {
       throw new SermepaException('The specified Ds_Merchant_Password is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantPassword', $merchant_password);
   }
 
@@ -993,6 +1010,7 @@ class Sermepa implements SermepaInterface {
     if (!filter_var($merchant_url, FILTER_VALIDATE_URL)) {
       throw new SermepaException('The specified Ds_Merchant_MerchantURL: ' . $merchant_url . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantMerchantURL', $merchant_url);
   }
 
@@ -1012,6 +1030,7 @@ class Sermepa implements SermepaInterface {
         !preg_match('/^([a-zA-Z0-9]+)$/i', $order)) {
       throw new SermepaException('The specified Ds_Merchant_Order: ' . $order . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantOrder', $order);
   }
 
@@ -1029,6 +1048,7 @@ class Sermepa implements SermepaInterface {
     if (strlen($product_description) > 125) {
       throw new SermepaException('The specified Ds_Merchant_ProductDescription: ' . $product_description . ' is too long.', self::TOOLONG_PARAM);
     }
+
     return $this->set('DsMerchantProductDescription', $product_description);
   }
 
@@ -1042,10 +1062,31 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
+  public function setPaymentMethod($payment_methods) {
+    foreach (str_split($payment_methods) as $method) {
+      if (!array_key_exists($method, $this->getAvailablePaymentMethods())) {
+        throw new SermepaException('The specified Ds_Merchant_PaymentMehod: ' . $method . ' is not valid/available.', self::BAD_PARAM);
+      }
+    }
+
+    return $this->set('DsMerchantPaymentMethod', $payment_methods);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPaymentMethod() {
+    return $this->DsMerchantPaymentMethod;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setSumTotal($sum_total) {
     if (!preg_match('/^([0-9]+)$/i', $sum_total)) {
       throw new SermepaException('The specified Ds_Merchant_SumTotal: ' . $sum_total . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantSumTotal', $sum_total);
   }
 
@@ -1063,6 +1104,7 @@ class Sermepa implements SermepaInterface {
     if (!preg_match('/^([0-9]{3})$/i', $terminal)) {
       throw new SermepaException('The specified Ds_Merchant_Terminal: ' . $terminal . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantTerminal', $terminal);
   }
 
@@ -1080,6 +1122,7 @@ class Sermepa implements SermepaInterface {
     if (strlen($titular) > 60) {
       throw new SermepaException('The specified Ds_Merchant_Titular: ' . $titular . ' is too long.', self::TOOLONG_PARAM);
     }
+
     return $this->set('DsMerchantTitular', $titular);
   }
 
@@ -1097,6 +1140,7 @@ class Sermepa implements SermepaInterface {
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/i', $transaction_date)) {
       throw new SermepaException('The specified Ds_Merchant_TransactionDate: ' . $transaction_date . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantTransactionDate', $transaction_date);
   }
 
@@ -1114,6 +1158,7 @@ class Sermepa implements SermepaInterface {
     if (!array_key_exists($transaction_type, $this->getAvailableTransactionTypes())) {
       throw new SermepaException('The specified Ds_Merchant_TransactionType: ' . $transaction_type . ' is not valid/available.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantTransactionType', $transaction_type);
   }
 
@@ -1131,6 +1176,7 @@ class Sermepa implements SermepaInterface {
     if (!filter_var($url_ko, FILTER_VALIDATE_URL)) {
       throw new SermepaException('The specified Ds_Merchant_UrlKO: ' . $url_ko . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantUrlKO', $url_ko);
   }
 
@@ -1148,6 +1194,7 @@ class Sermepa implements SermepaInterface {
     if (!filter_var($url_ok, FILTER_VALIDATE_URL)) {
       throw new SermepaException('The specified Ds_Merchant_UrlOK: ' . $url_ok . ' is not valid.', self::BAD_PARAM);
     }
+
     return $this->set('DsMerchantUrlOK', $url_ok);
   }
 
@@ -1161,15 +1208,6 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFeedbackValue($key) {
-    $key = strtoupper($key);
-
-    return (isset($this->feedbackParameters[$key]) ? $this->feedbackParameters[$key] : '');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function setEnvironment($environment) {
     if ($environment != 'live' && $environment != 'test' &&
         !filter_var($environment, FILTER_VALIDATE_URL)) {
@@ -1178,6 +1216,7 @@ class Sermepa implements SermepaInterface {
     elseif ($environment == 'live' || $environment == 'test') {
       $environment = constant('self::SERMEPA_URL_' . strtoupper($environment));
     }
+
     return $this->set('environment', $environment);
   }
 

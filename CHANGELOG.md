@@ -1,3 +1,11 @@
+Sermepa - v0.2 Nov 2015
+=======================
+- Updated PHP requirements.
+- Renamed getEncryptedPassword method to encryptPassword.
+- Renamed checkFeedback method to areValidSignatures.
+- Updated demo.
+- Added Ds_Merchant_PayMethods parameter.
+
 Sermepa - v0.1 Oct 2015
 ======================
 - Renamed namespace.
