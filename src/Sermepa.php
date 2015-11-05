@@ -209,9 +209,9 @@ class Sermepa implements SermepaInterface {
   /**
    * Initialize the instance.
    *
-   * @param string $titular
+   * @param string $merchant_name
    *   This field will display to the holder on the screen confirmation of
-   *   purchase.
+   *   purchase, it is the commerce name.
    *
    * @param string $merchant_code
    *   FUC Code assigned to commerce.
@@ -221,7 +221,7 @@ class Sermepa implements SermepaInterface {
    *   length.
    *
    * @param string $merchant_password
-   *   Commerce SHA256 password∫.
+   *   Commerce SHA256 password.
    *
    * @param string $environment
    *   Environment: live, test or an override url.
@@ -241,7 +241,8 @@ class Sermepa implements SermepaInterface {
    *       deferred.
    *   - merchant_data: Field for commerce to be included in the data sent by
    *       the "on-line" answer to trade if you have chosen this option.
-   *   - merchant_name: Commerce name will appear on the ticket that the client.
+   *   - merchant_titular: Card holder name will appear on the ticket that the
+   *       client.
    *   - merchant_url: URL of commerce that will receive a post with transaction
    *       data.
    *   - order: Order identifier. The first 4 digits must be numeric.
@@ -268,8 +269,8 @@ class Sermepa implements SermepaInterface {
    *
    * @throws \CommerceRedsys\Payment\SermepaException
    */
-  public function __construct($titular, $merchant_code, $merchant_terminal, $merchant_password, $environment, $options = array()) {
-    $this->setTitular($titular)
+  public function __construct($merchant_name, $merchant_code, $merchant_terminal, $merchant_password, $environment, $options = array()) {
+    $this->setMerchantName($merchant_name)
          ->setMerchantCode($merchant_code)
          ->setTerminal($merchant_terminal)
          ->setMerchantPassword($merchant_password)
@@ -442,6 +443,7 @@ class Sermepa implements SermepaInterface {
    */
   public static function getAvailableConsumerLanguages() {
     return array(
+      '000' => 'Unknown',
       '001' => 'Spanish',
       '002' => 'English',
       '003' => 'Catalan',

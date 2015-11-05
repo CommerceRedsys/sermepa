@@ -1,3 +1,7 @@
+Sermepa - v0.4 Nov 2015
+=======================
+- Minor fix.
+
 Sermepa - v0.3 Nov 2015
 =======================
 - Converted handleResponse method to static.
