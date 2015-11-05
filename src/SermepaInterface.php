@@ -49,6 +49,17 @@ interface SermepaInterface {
   public static function getAvailableTransactionTypes();
 
   /**
+   * Get the Sermepa feedback from GET + POST parameters.
+   *
+   * @return array
+   *   An associative array containing the Sermepa feedback taken from the
+   *   $_GET and $_POST superglobals, excluding 'q'.
+   *   Returns FALSE if the Ds_SignatureVersion parameter is missing
+   *   (indicating missing or invalid Sermepa feedback).
+   */
+  public static function getFeedback();
+
+  /**
    * Get merchant code maxlength.
    *
    * @return integer
@@ -162,17 +173,6 @@ interface SermepaInterface {
    *   - Ds_Card_Type: (Optional) C for credit, D for debit.
    */
   public function decodeMerchantParameters($encoded_parameters);
-
-  /**
-   * Get the Sermepa feedback from GET + POST parameters.
-   *
-   * @return array
-   *   An associative array containing the Sermepa feedback taken from the
-   *   $_GET and $_POST superglobals, excluding 'q'.
-   *   Returns FALSE if the Ds_SignatureVersion parameter is missing
-   *   (indicating missing or invalid Sermepa feedback).
-   */
-  public function getFeedback();
 
   /**
    * Setter for Sermepa::DsMerchantAmount property.

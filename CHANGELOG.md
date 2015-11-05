@@ -1,3 +1,7 @@
+Sermepa - v0.5 Nov 2015
+=======================
+- Converted getFeedback method to static.
+
 Sermepa - v0.4 Nov 2015
 =======================
 - Minor fix.

@@ -42,12 +42,12 @@ class Sermepa implements SermepaInterface {
   /**
    * Constant indicating the merchant name maxlength.
    */
-  const SERMEPA_DS_MERCHANT_MERCHANTNAME_MAXLENGTH = 25;
+  const SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH = 9;
 
   /**
    * Constant indicating the merchant name maxlength.
    */
-  const SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH = 9;
+  const SERMEPA_DS_MERCHANT_MERCHANTNAME_MAXLENGTH = 25;
 
   /**
    * Constant indicating the merchant password maxlength.
@@ -533,6 +533,20 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
+  public function getFeedback() {
+    $feedback = FALSE;
+    if (isset($_REQUEST['Ds_SignatureVersion'])) {
+      // Prepare the feedback values sent by Sermepa for processing. We don't
+      // use $_REQUEST since this includes the $_SESSION variables.
+      $feedback = $_GET + $_POST;
+      unset($feedback['q']);
+    }
+    return $feedback;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getMerchantCodeMaxLength() {
     return self::SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH;
   }
@@ -807,20 +821,6 @@ class Sermepa implements SermepaInterface {
 
     // Return the JSON decoded parameters.
     return json_decode($decoded_parameters, TRUE);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFeedback() {
-    $feedback = FALSE;
-    if (isset($_REQUEST['Ds_SignatureVersion'])) {
-      // Prepare the feedback values sent by Sermepa for processing. We don't
-      // use $_REQUEST since this includes the $_SESSION variables.
-      $feedback = $_GET + $_POST;
-      unset($feedback['q']);
-    }
-    return $feedback;
   }
 
   /**
