@@ -734,7 +734,7 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function areValidSignatures($feedback) {
+  public function validSignatures($feedback) {
     $status = FALSE;
 
     $encoded_parameters = $feedback['Ds_MerchantParameters'];

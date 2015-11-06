@@ -1,3 +1,7 @@
+Sermepa - v0.6 Nov 2015
+=======================
+- Renamed areValidSignatures to validSignatures.
+
 Sermepa - v0.5 Nov 2015
 =======================
 - Converted getFeedback method to static.

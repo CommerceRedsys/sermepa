@@ -117,7 +117,7 @@ interface SermepaInterface {
    *
    * @throws \CommerceRedsys\Payment\SermepaException
    */
-  public function areValidSignatures($feedback);
+  public function validSignatures($feedback);
 
   /**
    * Compose the merchant parameters.
