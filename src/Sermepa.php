@@ -533,7 +533,7 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFeedback() {
+  public static function getFeedback() {
     $feedback = FALSE;
     if (isset($_REQUEST['Ds_SignatureVersion'])) {
       // Prepare the feedback values sent by Sermepa for processing. We don't

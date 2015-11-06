@@ -1,3 +1,7 @@
+Sermepa - v0.7 Nov 2015
+=======================
+- Fixed getFeedback declaration.
+
 Sermepa - v0.6 Nov 2015
 =======================
 - Renamed areValidSignatures to validSignatures.
