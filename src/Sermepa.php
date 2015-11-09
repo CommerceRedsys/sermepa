@@ -937,7 +937,7 @@ class Sermepa implements SermepaInterface {
    * {@inheritdoc}
    */
   public function setMerchantCode($merchant_code) {
-    if (strlen($merchant_code) > SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH) {
+    if (strlen($merchant_code) > self::SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH) {
       throw new SermepaException('The specified Ds_Merchant_MerchantCode: ' . $merchant_code . ' is not valid.', self::BAD_PARAM);
     }
 
