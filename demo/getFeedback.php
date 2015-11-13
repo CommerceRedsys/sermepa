@@ -28,7 +28,7 @@
     $decoded_parameters = $gateway->decodeMerchantParameters($encoded_parameters);
 
     $feedback_signature = $feedback['Ds_Signature'];
-    $composed_signature = $gateway->composeMerchantSignatureFromFeedback($decoded_parameters);
+    $composed_signature = $gateway->composeMerchantSignatureFromFeedback($encoded_parameters);
 
     // Check if the signatures are valid.
     if ($feedback_signature != $composed_signature) {
