@@ -4,6 +4,23 @@ A PHP 5.3+ payment gateway class for spanish banks that use Sermepa/Redsys syste
 
 Full list of banks managed by [sermepa](http://www.redsys.es/wps/portal/redsys/publica/acercade/nuestrosSocios)
 
+## Usage with Composer
+
+To include it in your application using Composer, you can just include in your `composer.json` file:
+
+```json
+"repositories": [
+  {
+    "type": "git",
+    "url": "URL_OF_THIS_REPOSITORY"
+  }
+],
+
+"require": {
+  "commerce_redsys/sermepa": "dev-master"
+},
+```
+
 ----------
 
 License
