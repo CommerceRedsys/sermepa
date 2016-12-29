@@ -17,7 +17,7 @@ To include it in your application using Composer, you can just include in your `
 ],
 
 "require": {
-  "commerce_redsys/sermepa": "dev-master"
+  "commerceredsys/sermepa": "dev-master"
 },
 ```
 
