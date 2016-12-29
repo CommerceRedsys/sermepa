@@ -1,0 +1,17 @@
+{
+  "name": "commerce_redsys/sermepa",
+  "description": "SERMEPA library for PHP projects.",
+  "keywords":     ["sermepa", "payment"],
+  "homepage":     "https://github.com/CommerceRedsys/sermepa",
+  "type":         "library",
+  "license":      "MIT",
+  "autoload": {
+    "psr-4": {
+        "CommerceRedsys\\Payment\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.3"
+  },
+  "minimum-stability": "dev"
+}
