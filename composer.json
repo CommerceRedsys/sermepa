@@ -1,5 +1,5 @@
 {
-  "name": "commerce_redsys/sermepa",
+  "name": "commerceredsys/sermepa",
   "description": "SERMEPA library for PHP projects.",
   "keywords":     ["sermepa", "payment"],
   "homepage":     "https://github.com/CommerceRedsys/sermepa",
