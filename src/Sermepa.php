@@ -354,7 +354,8 @@ class Sermepa implements SermepaInterface {
       $padded_order_number = $order_number . str_repeat(chr(0), $pad);
 
       // Encrypt using OpenSSL
-      return openssl_encrypt($padded_order_number, 'DES3', $merchant_password, OPENSSL_NO_PADDING);
+      // Errors are ommited because Sermepa uses an empty IV, which causes a warning because it's insecure.
+      return @openssl_encrypt($padded_order_number, 'DES3', $merchant_password, OPENSSL_NO_PADDING);
     } else {
       // Return encrypted order number with decoded SHA256 password.
       // PHP 4 >= 4.0.2.
