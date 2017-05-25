@@ -105,6 +105,11 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantDateFrecuency;
 
   /**
+   * Optional field for commerce to indicate if it's a payment with reference.
+   */
+  private $DsMerchantIdentifier;
+
+  /**
    * Required. FUC Code assigned to commerce.
    */
   private $DsMerchantMerchantCode;
@@ -370,6 +375,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_ConsumerLanguage' => $this->DsMerchantConsumerLanguage,
       'Ds_Merchant_Currency' => $this->DsMerchantCurrency,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
+      'Ds_Merchant_Identifier' => $this->DsMerchantIdentifier,
       'Ds_Merchant_MerchantCode' => $this->DsMerchantMerchantCode,
       'Ds_Merchant_MerchantData' => $this->DsMerchantMerchantData,
       'Ds_Merchant_MerchantName' => $this->DsMerchantMerchantName,
@@ -967,6 +973,20 @@ class Sermepa implements SermepaInterface {
    */
   public function getMerchantData() {
     return $this->DsMerchantMerchantData;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMerchantIdentifier() {
+    return $this->set('DsMerchantIdentifier', 'REQUIRED');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMerchantIdentifier() {
+    return $this->DsMerchantIdentifier;
   }
 
   /**
