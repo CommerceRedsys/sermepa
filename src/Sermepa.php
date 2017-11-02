@@ -154,7 +154,7 @@ class Sermepa implements SermepaInterface {
    * Optional. This variable is used to skip the payment method selection when
    * more than one is enabled for the sermepa account.
    * C - Credit card.
-   * D - Domiciliation (Only banks that support it).
+   * D - Direct debit (Only banks that support it).
    * R - Bank transfer (Only banks that support it).
    * T - Iupay card (Must be active this payment method).
    * O - Iupay (Must be active this payment method).
@@ -259,7 +259,7 @@ class Sermepa implements SermepaInterface {
    *   - payment_method: Payment method selection when more than one is enabled
    *       for the sermepa account.
    *       C - Credit card.
-   *       D - Domiciliation (Only banks that support it).
+   *       D - Direct debit (Only banks that support it).
    *       R - Bank transfer (Only banks that support it).
    *       T - Iupay card (Must be active this payment method).
    *       O - Iupay (Must be active this payment method).
@@ -516,7 +516,7 @@ class Sermepa implements SermepaInterface {
   public static function getAvailablePaymentMethods() {
     return array(
       'C' => 'Credit card',
-      'D' => 'Domiciliation',
+      'D' => 'Direct debit',
       'R' => 'Bank transfer',
       'T' => 'Iupay card',
       'O' => 'Iupay',
