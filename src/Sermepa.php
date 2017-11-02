@@ -349,23 +349,15 @@ class Sermepa implements SermepaInterface {
     // Set default IV value.
     // byte [] IV = {0, 0, 0, 0, 0, 0, 0, 0}.
     $bytes = array(0, 0, 0, 0, 0, 0, 0, 0);
-    // PHP 4 >= 4.0.2.
-    $iv = implode(array_map("chr", $bytes));
+    $iv = implode(array_map('chr', $bytes));
 
-    if ((PHP_MAJOR_VERSION > 7) || (PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION >= 1)) {
-      // Manually add padding
-      $block = 8; // DES3 block size
-      $pad = $block - (strlen($order_number) % $block);
-      $padded_order_number = $order_number . str_repeat(chr(0), $pad);
+    // Manually add padding
+    $block = 8; // DES3 block size
+    $pad = $block - (strlen($order_number) % $block);
+    $padded_order_number = $order_number . str_repeat(chr(0), $pad);
 
-      // Encrypt using OpenSSL
-      // Errors are ommited because Sermepa uses an empty IV, which causes a warning because it's insecure.
-      return @openssl_encrypt($padded_order_number, 'DES3', $merchant_password, OPENSSL_NO_PADDING);
-    } else {
-      // Return encrypted order number with decoded SHA256 password.
-      // PHP 4 >= 4.0.2.
-      return mcrypt_encrypt(MCRYPT_3DES, $merchant_password, $order_number, MCRYPT_MODE_CBC, $iv);
-    }
+    // Return encrypted order number using OpenSSL with decoded SHA256 password.
+    return openssl_encrypt($padded_order_number, 'DES3', $merchant_password, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
   }
 
   /**
