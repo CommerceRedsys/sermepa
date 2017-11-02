@@ -105,6 +105,11 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantDateFrecuency;
 
   /**
+   * Optional field for commerce to indicate the associated payment group.
+   */
+  private $DsMerchantGroup;
+
+  /**
    * Optional field for commerce to indicate if it's a payment with reference.
    */
   private $DsMerchantIdentifier;
@@ -379,6 +384,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_ConsumerLanguage' => $this->DsMerchantConsumerLanguage,
       'Ds_Merchant_Currency' => $this->DsMerchantCurrency,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
+      'Ds_Merchant_Group' => $this->DsMerchantGroup,
       'Ds_Merchant_Identifier' => $this->DsMerchantIdentifier,
       'Ds_Merchant_MerchantCode' => $this->DsMerchantMerchantCode,
       'Ds_Merchant_MerchantData' => $this->DsMerchantMerchantData,
@@ -982,8 +988,22 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
-  public function setMerchantIdentifier() {
-    return $this->set('DsMerchantIdentifier', 'REQUIRED');
+  public function getMerchantGroup() {
+    return $this->DsMerchantGroup;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMerchantMerchantGroup($group) {
+    return $this->set('DsMerchantGroup', $group);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMerchantIdentifier($identifier = 'REQUIRED') {
+    return $this->set('DsMerchantIdentifier', $identifier);
   }
 
   /**
