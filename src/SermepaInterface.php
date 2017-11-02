@@ -343,6 +343,23 @@ interface SermepaInterface {
   public function getMerchantData();
 
   /**
+   * Setter for Sermepa::DsMerchantIdentifier property.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   */
+  public function setMerchantIdentifier();
+
+  /**
+   * Getter for Sermepa::DsMerchantIdentifier property.
+   *
+   * @return mixed
+   *   Return the requested property.
+   */
+  public function getMerchantIdentifier();
+
+  /**
    * Setter for Sermepa::DsMerchantMerchantName property.
    *
    * @param string $merchant_name
@@ -566,7 +583,7 @@ interface SermepaInterface {
   public function setTransactionType($transaction_type);
 
   /**
-   * Getter for Sermepa::DsMerchantCurrency property.
+   * Getter for Sermepa::DsMerchantTransactionType property.
    *
    * @return mixed
    *   Return the requested property.
