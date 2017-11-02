@@ -351,8 +351,9 @@ class Sermepa implements SermepaInterface {
     $bytes = array(0, 0, 0, 0, 0, 0, 0, 0);
     $iv = implode(array_map('chr', $bytes));
 
-    // Manually add padding
-    $block = 8; // DES3 block size
+    // Manually add padding.
+    // DES3 block size.
+    $block = 8;
     $pad = $block - (strlen($order_number) % $block);
     $padded_order_number = $order_number . str_repeat(chr(0), $pad);
 
