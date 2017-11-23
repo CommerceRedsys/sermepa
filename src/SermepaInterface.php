@@ -68,6 +68,14 @@ interface SermepaInterface {
   public static function getMerchantCodeMaxLength();
 
   /**
+   * Get merchant group maxlength.
+   *
+   * @return integer
+   *   Return merchant group maxlength.
+   */
+  public static function getMerchantGroupMaxLength();
+
+  /**
    * Get merchant name maxlength.
    *
    * @return integer
