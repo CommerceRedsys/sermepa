@@ -1,3 +1,16 @@
+Sermepa - v1.0 Nov 2017
+=======================
+- Added getMerchantGroupMaxLength method.
+- Updated changelog.
+
+Sermepa - v0.9 Nov 2017
+=======================
+- Added PHP >= 7.1 support and referenced payments.
+
+Sermepa - v0.8 Dec 2016
+=======================
+- Added composer support.
+
 Sermepa - v0.7 Nov 2015
 =======================
 - Fixed getFeedback declaration.
