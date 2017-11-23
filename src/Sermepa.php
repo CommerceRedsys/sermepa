@@ -45,6 +45,11 @@ class Sermepa implements SermepaInterface {
   const SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH = 9;
 
   /**
+   * Constant indicating the merchant group maxlength.
+   */
+  const SERMEPA_DS_MERCHANT_MERCHANTGROUP_MAXLENGTH = 5;
+
+  /**
    * Constant indicating the merchant name maxlength.
    */
   const SERMEPA_DS_MERCHANT_MERCHANTNAME_MAXLENGTH = 25;
@@ -565,6 +570,13 @@ class Sermepa implements SermepaInterface {
    */
   public static function getMerchantCodeMaxLength() {
     return self::SERMEPA_DS_MERCHANT_MERCHANTCODE_MAXLENGTH;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getMerchantGroupMaxLength() {
+    return self::SERMEPA_DS_MERCHANT_MERCHANTGROUP_MAXLENGTH;
   }
 
   /**
