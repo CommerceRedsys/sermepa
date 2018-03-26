@@ -14,6 +14,7 @@ namespace CommerceRedsys\Payment;
  * Class implementation.
  */
 class Sermepa implements SermepaInterface {
+
   /**
    * Constant indicating error code for an undefined parameter.
    */
@@ -407,7 +408,9 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_UrlOK' => $this->DsMerchantUrlOK,
     );
 
-    return array_filter($parameters);
+    return array_filter($parameters, function($parameter) {
+      return ($parameter !== NULL && $parameter !== FALSE && $parameter !== ''); 
+    });
   }
 
   /**
