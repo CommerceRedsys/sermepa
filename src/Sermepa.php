@@ -36,6 +36,11 @@ class Sermepa implements SermepaInterface {
   const TOOLONG_PARAM = 3;
 
   /**
+   * Constant indicating the maximum value of an authorization code.
+   */
+  const MAXIMUN_AUTHORIZATION_CODE_VALUE = 99;
+
+  /**
    * Constant indicating the signature algorithm version.
    */
   const SERMEPA_DS_SIGNATUREVERSION = 'HMAC_SHA256_V1';
@@ -606,8 +611,19 @@ class Sermepa implements SermepaInterface {
   /**
    * {@inheritdoc}
    */
+  public static function authorizedResponse($response) {
+    if ((int) $response <= self::MAXIMUN_AUTHORIZATION_CODE_VALUE) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function handleResponse($response = NULL) {
-    if ((int) $response <= 99) {
+    if ((int) $response <= self::MAXIMUN_AUTHORIZATION_CODE_VALUE) {
       $msg = 'Transaction authorized for payments and preauthorizations';
     }
     else {
