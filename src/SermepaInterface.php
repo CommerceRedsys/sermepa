@@ -100,6 +100,17 @@ interface SermepaInterface {
   public static function getMerchantTerminalMaxLength();
 
   /**
+   * Validates a transaction response code.
+   *
+   * @param int $response
+   *   The response code.
+   *
+   * @return bool
+   *   TRUE if the response code of the transaction is an authorization code.
+   */
+  public static function authorizedResponse($response);
+
+  /**
    * Handle the response of the payment transaction.
    *
    * Messages from "Manual de integración con el TPV Virtual para comercios con
