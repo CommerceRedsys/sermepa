@@ -402,7 +402,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_MerchantName' => $this->DsMerchantMerchantName,
       'Ds_Merchant_MerchantURL' => $this->DsMerchantMerchantURL,
       'Ds_Merchant_Order' => $this->DsMerchantOrder,
-      'Ds_Merchant_PayMethod' => $this->DsMerchantPaymentMethod,
+      'Ds_Merchant_PayMethods' => $this->DsMerchantPaymentMethod,
       'Ds_Merchant_ProductDescription' => $this->DsMerchantProductDescription,
       'Ds_Merchant_SumTotal' => $this->DsMerchantSumTotal,
       'Ds_Merchant_Terminal' => $this->DsMerchantTerminal,
