@@ -116,6 +116,11 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantDateFrecuency;
 
   /**
+   * PDS2 exemption.
+   */
+  private $DsMerchantExcepSCA;
+
+  /**
    * Optional field for commerce to indicate the associated payment group.
    */
   private $DsMerchantGroup;
@@ -395,6 +400,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_ConsumerLanguage' => $this->DsMerchantConsumerLanguage,
       'Ds_Merchant_Currency' => $this->DsMerchantCurrency,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
+      'Ds_Merchant_Excep_SCA' => $this->DsMerchantExcepSCA,
       'Ds_Merchant_Group' => $this->DsMerchantGroup,
       'Ds_Merchant_Identifier' => $this->DsMerchantIdentifier,
       'Ds_Merchant_MerchantCode' => $this->DsMerchantMerchantCode,
@@ -414,7 +420,7 @@ class Sermepa implements SermepaInterface {
     );
 
     return array_filter($parameters, function($parameter) {
-      return ($parameter !== NULL && $parameter !== FALSE && $parameter !== ''); 
+      return ($parameter !== NULL && $parameter !== FALSE && $parameter !== '');
     });
   }
 
@@ -978,6 +984,25 @@ class Sermepa implements SermepaInterface {
    */
   public function getDateFrecuency() {
     return $this->DsMerchantDateFrecuency;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setExcepSCA($sca) {
+    $allowed_scas = array('MIT', 'LWV', 'TRA', 'COR');
+    if (!in_array($sca, $allowed_scas)) {
+      throw new SermepaException('The specified Ds_Merchant_Excep_SCA: ' . $sca . ' is not valid.', self::BAD_PARAM);
+    }
+
+    return $this->set('DsMerchantExcepSCA', $sca);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExcepSCA() {
+    return $this->DsMerchantExcepSCA;
   }
 
   /**
