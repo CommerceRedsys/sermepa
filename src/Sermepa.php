@@ -99,6 +99,21 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantChargeExpiryDate;
 
   /**
+   * COF transaction indicator.
+   */
+  private $DsMerchantCofIni;
+
+  /**
+   * COF transaction ID.
+   */
+  private $DsMerchantCofTxnid;
+
+  /**
+   * Transaction type.
+   */
+  private $DsMerchantCofType;
+
+  /**
    * Optional: 3 is considered its maximum length. The value 000, indicating
    * that there isn't determined the customer's language.
    */
@@ -399,6 +414,9 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_ChargeExpiryDate' => $this->DsMerchantChargeExpiryDate,
       'Ds_Merchant_ConsumerLanguage' => $this->DsMerchantConsumerLanguage,
       'Ds_Merchant_Currency' => $this->DsMerchantCurrency,
+      'Ds_Merchant_Cof_Ini' => $this->DsMerchantCofIni,
+      'Ds_Merchant_Cof_Txnid' => $this->DsMerchantCofTxnid,
+      'Ds_Merchant_Cof_Type' => $this->DsMerchantCofType,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
       'Ds_Merchant_Excep_SCA' => $this->DsMerchantExcepSCA,
       'Ds_Merchant_Group' => $this->DsMerchantGroup,
@@ -929,6 +947,61 @@ class Sermepa implements SermepaInterface {
    */
   public function getChargeExpiryDate() {
     return $this->DsMerchantChargeExpiryDate;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCofIni($ini) {
+    $allowed_inis = array('S', 'N');
+    if (!in_array($ini, $allowed_inis)) {
+      throw new SermepaException('The specified Ds_Merchant_Cof_Ini: ' . $ini . ' is not valid.', self::BAD_PARAM);
+    }
+
+    return $this->set('DsMerchantCofIni', $ini);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCofIni() {
+    return $this->DsMerchantCofIni;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCofTxnid($txn_id) {
+    return $this->set('DsMerchantCofTxnid', $txn_id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCofTxnid() {
+    return $this->DsMerchantCofTxnid;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCofType($type) {
+    $allowed_types = array(
+      'I', 'R', 'H', 'E',
+      'D', 'M', 'N', 'C',
+    );
+    if (!in_array($type, $allowed_types)) {
+      throw new SermepaException('The specified Ds_Merchant_Cof_Type: ' . $type . ' is not valid.', self::BAD_PARAM);
+    }
+
+    return $this->set('DsMerchantCofType', $type);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCofType() {
+    return $this->DsMerchantCofType;
   }
 
   /**

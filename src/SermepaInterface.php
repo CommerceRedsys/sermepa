@@ -257,6 +257,69 @@ interface SermepaInterface {
   public function getChargeExpiryDate();
 
   /**
+   * Setter for Sermepa::DsMerchantCofIni property.
+   *
+   * @param string $ini
+   *   The value to set.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   * @throws \CommerceRedsys\Payment\SermepaException
+   */
+  public function setCofIni($ini);
+
+  /**
+   * Getter for Sermepa::DsMerchantCofIni property.
+   *
+   * @return string
+   *   Return the requested property.
+   */
+  public function getCofIni();
+
+  /**
+   * Setter for Sermepa::DsMerchantCofTxnid property.
+   *
+   * @param string $txn_id
+   *   The value to set.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   * @throws \CommerceRedsys\Payment\SermepaException
+   */
+  public function setCofTxnid($txn_id);
+
+  /**
+   * Getter for Sermepa::DsMerchantCofTxnid property.
+   *
+   * @return string
+   *   Return the requested property.
+   */
+  public function getCofTxnid();
+
+  /**
+   * Setter for Sermepa::DsMerchantCofType property.
+   *
+   * @param string $type
+   *   The value to set.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   * @throws \CommerceRedsys\Payment\SermepaException
+   */
+  public function setCofType($type);
+
+  /**
+   * Getter for Sermepa::DsMerchantCofType property.
+   *
+   * @return string
+   *   Return the requested property.
+   */
+  public function getCofType();
+
+  /**
    * Setter for Sermepa::DsMerchantConsumerLanguage property.
    *
    * @param integer $consumer_language
