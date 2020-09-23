@@ -383,6 +383,27 @@ interface SermepaInterface {
   public function getDateFrecuency();
 
   /**
+   * Setter for Sermepa::DsMerchantEMV3DS property.
+   *
+   * @param array $fields
+   *   The property to set.
+   *
+   * @return Sermepa
+   *   Return itself.
+   *
+   * @throws \CommerceRedsys\Payment\SermepaException
+   */
+  public function setEMV3DS(array $fields);
+
+  /**
+   * Getter for Sermepa::DsMerchantEMV3DS property.
+   *
+   * @return array
+   *   Return the requested property.
+   */
+  public function getEMV3DS();
+
+  /**
    * Setter for Sermepa::DsMerchantMerchantCode property.
    *
    * @param integer $merchant_code

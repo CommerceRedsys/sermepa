@@ -131,6 +131,11 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantDateFrecuency;
 
   /**
+   * Needed fields for the EMV3DS authentication.
+   */
+  private $DsMerchantEMV3DS = [];
+
+  /**
    * PDS2 exemption.
    */
   private $DsMerchantExcepSCA;
@@ -418,6 +423,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_Cof_Txnid' => $this->DsMerchantCofTxnid,
       'Ds_Merchant_Cof_Type' => $this->DsMerchantCofType,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
+      'Ds_Merchant_EMV3DS' => $this->DsMerchantEMV3DS,
       'Ds_Merchant_Excep_SCA' => $this->DsMerchantExcepSCA,
       'Ds_Merchant_Group' => $this->DsMerchantGroup,
       'Ds_Merchant_Identifier' => $this->DsMerchantIdentifier,
@@ -1057,6 +1063,24 @@ class Sermepa implements SermepaInterface {
    */
   public function getDateFrecuency() {
     return $this->DsMerchantDateFrecuency;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setEMV3DS($fields) {
+    if (!is_array($fields)) {
+      throw new SermepaException('The specified Ds_Merchant_EMV3DS is not valid.', self::BAD_PARAM);
+    }
+
+    return $this->set('DsMerchantEMV3DS', $fields);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEMV3DS() {
+    return $this->DsMerchantEMV3DS;
   }
 
   /**
