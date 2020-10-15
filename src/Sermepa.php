@@ -131,6 +131,11 @@ class Sermepa implements SermepaInterface {
   private $DsMerchantDateFrecuency;
 
   /**
+   * Payment without authentication.
+   */
+  private $DsMerchantDirectPayment;
+
+  /**
    * Needed fields for the EMV3DS authentication.
    */
   private $DsMerchantEMV3DS = [];
@@ -423,6 +428,7 @@ class Sermepa implements SermepaInterface {
       'Ds_Merchant_Cof_Txnid' => $this->DsMerchantCofTxnid,
       'Ds_Merchant_Cof_Type' => $this->DsMerchantCofType,
       'Ds_Merchant_DateFrecuency' => $this->DsMerchantDateFrecuency,
+      'Ds_Merchant_DirectPayment' => $this->DsMerchantDirectPayment,
       'Ds_Merchant_EMV3DS' => $this->DsMerchantEMV3DS,
       'Ds_Merchant_Excep_SCA' => $this->DsMerchantExcepSCA,
       'Ds_Merchant_Group' => $this->DsMerchantGroup,
@@ -1063,6 +1069,25 @@ class Sermepa implements SermepaInterface {
    */
   public function getDateFrecuency() {
     return $this->DsMerchantDateFrecuency;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDirectPayment($value) {
+    if (!in_array($value, array(TRUE, 'MOTO'))) {
+      throw new SermepaException('The specified Ds_Merchant_DirectPayment: ' . $value . ' is not valid.', self::BAD_PARAM);
+    }
+
+    return $this->set('DsMerchantDirectPayment', $value);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDirectPayment() {
+    return $this->DsMerchantDirectPayment;
   }
 
   /**
