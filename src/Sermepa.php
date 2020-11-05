@@ -450,7 +450,7 @@ class Sermepa implements SermepaInterface {
     );
 
     return array_filter($parameters, function($parameter) {
-      return ($parameter !== NULL && $parameter !== FALSE && $parameter !== '' && !empty($parameter)  );
+      return (($parameter !== NULL && $parameter !== FALSE && $parameter !== '') || (is_array($parameter) && !empty($parameter)));
     });
   }
 
