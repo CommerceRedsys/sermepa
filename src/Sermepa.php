@@ -568,8 +568,10 @@ class Sermepa implements SermepaInterface {
       'D' => 'Direct debit',
       'R' => 'Bank transfer',
       'T' => 'Iupay card',
+      'N' => 'MasterPass',
       'O' => 'Iupay',
       'V' => 'v.me',
+      'z' => 'Bizum',
     );
   }
 
