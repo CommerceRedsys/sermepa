@@ -1289,13 +1289,17 @@ class Sermepa implements SermepaInterface {
    * {@inheritdoc}
    */
   public function setPaymentMethod($payment_methods) {
-    foreach (str_split($payment_methods) as $method) {
+    if (!is_array($payment_methods)) {
+      $payment_methods = array($payment_methods);
+    }
+
+    foreach ($payment_methods as $method) {
       if (!array_key_exists($method, $this->getAvailablePaymentMethods())) {
         throw new SermepaException('The specified Ds_Merchant_PaymentMehod: ' . $method . ' is not valid/available.', self::BAD_PARAM);
       }
     }
 
-    return $this->set('DsMerchantPaymentMethod', $payment_methods);
+    return $this->set('DsMerchantPaymentMethod', implode($payment_methods));
   }
 
   /**
