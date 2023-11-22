@@ -572,6 +572,8 @@ class Sermepa implements SermepaInterface {
       'O' => 'Iupay',
       'V' => 'v.me',
       'z' => 'Bizum',
+      'google' => 'Google Pay',
+      'xpay' => 'Google Pay / Apple Pay',
     );
   }
 
